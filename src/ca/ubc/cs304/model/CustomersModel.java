@@ -1,7 +1,5 @@
 package ca.ubc.cs304.model;
 
-import oracle.net.aso.n;
-
 /**
  * The intent for this class is to update/store information about a single customer entry
  */

@@ -1,7 +1,6 @@
 package ca.ubc.cs304.model;
 import java.sql.Date;
 import java.sql.Time;
-import java.util.PrimitiveIterator.OfDouble;
 
 /**
  * The intent for this class is to update/store information about a rental
