@@ -7,6 +7,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+// added this to run create scripts
+import org.apache.ibatis.jdbc.ScriptRunner;
 
 import ca.ubc.cs304.model.BranchModel;
 
@@ -138,16 +140,25 @@ public class DatabaseConnectionHandler {
 		}	
 	}
 	
-	public boolean login(String username, String password) {
+	public boolean login() {//String username, String password) {
 		try {
 			if (connection != null) {
 				connection.close();
 			}
 	
-			connection = DriverManager.getConnection(ORACLE_URL, username, password);
+			connection = DriverManager.getConnection(ORACLE_URL, "cheeshee", "a45708666");
 			connection.setAutoCommit(false);
 	
 			System.out.println("\nConnected to Oracle!");
+
+			//Initialize the script runner
+      ScriptRunner sr = new ScriptRunner(con);
+      //Creating a reader object
+      Reader reader = new BufferedReader(new FileReader("E:\\sampleScript.sql"));
+      //Running the script
+      sr.runScript(reader);
+
+
 			return true;
 		} catch (SQLException e) {
 			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
