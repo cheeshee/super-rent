@@ -138,13 +138,13 @@ public class DatabaseConnectionHandler {
 		}	
 	}
 	
-	public boolean login() {//String username, String password) {
+	public boolean login(String username, String password) {
 		try {
 			if (connection != null) {
 				connection.close();
 			}
 	
-			connection = DriverManager.getConnection(ORACLE_URL, "cheeshee", "a45708666");
+			connection = DriverManager.getConnection(ORACLE_URL, username, password);
 			connection.setAutoCommit(false);
 	
 			System.out.println("\nConnected to Oracle!");
