@@ -3,7 +3,7 @@
 
 CREATE TABLE IF NOT EXISTS `rentals` (
   `rid` int(10) NOT NULL AUTO_INCREMENT,
-  `vlicense` int(30) NOT NULL,
+  `vlicense` varchar(10) NOT NULL,
   `dlicense` int(20) NOT NULL,
   `fromDate` date NOT NULL,
   `fromTime` time NOT NULL,

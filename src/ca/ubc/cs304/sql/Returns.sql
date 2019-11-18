@@ -5,8 +5,8 @@ CREATE TABLE IF NOT EXISTS `returns` (
   `date` date NOT NULL,
   `time` time NOT NULL,
   `odometer` int(10),
-  `fulltank` binary,    -- is this just true/false ??
-  `value` varchar(30),  -- what even is this??
+  `fulltank` bit,    -- is this just true/false ??
+  `value` float(30),  -- what even is this??
   PRIMARY KEY (`rid`),
   FOREIGN KEY (`rid`) references rentals(`rid`)
 )
