@@ -8,15 +8,17 @@ import java.sql.Time;
 public class ReservationsModel {
   private final int confNo;
   private final String vtname;
+  private final String vlicense;
   private final int dlicense;
   private final Date fromDate;  
   private final Time fromTime;
   private final Date toDate;
   private final Time toTime;
 
-  public ReservationsModel(int confNo, String vtname, int dlicense, Date fromDate, Time fromTime, Date toDate, Time toTime) {
+  public ReservationsModel(int confNo, String vtname, String vlicense, int dlicense, Date fromDate, Time fromTime, Date toDate, Time toTime) {
     this.confNo = confNo;
     this.vtname = vtname;
+    this.vlicense = vlicense;
     this.dlicense = dlicense;
     this.fromDate = fromDate;
     this.fromTime = fromTime;
@@ -30,6 +32,10 @@ public class ReservationsModel {
   
   public String getVtname() {
     return vtname;
+  }
+
+  public String getVlicense() {
+    return vlicense;
   }
 
   public int getDlicense() {

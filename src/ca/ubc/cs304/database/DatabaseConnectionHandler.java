@@ -177,7 +177,7 @@ public class DatabaseConnectionHandler {
 				ps.setInt(3, model.getCellphone());
 			}
 			if (model.getAddress() == null) {
-				ps.setNull(4, java.sql.Types.VARCHAR);
+				ps.setNull(4, java.sql.Types.VARCHAR2);
 			} else {
 				ps.setString(4, model.getAddress());
 			}
@@ -222,14 +222,15 @@ public class DatabaseConnectionHandler {
 			ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM reservations");
 			confNo = rs.getInt(1) + 1;	// should return just an int
 
-			PreparedStatement ps = connection.prepareStatement("INSERT INTO reservations VALUES (?,?,?,?,?,?,?)");
+			PreparedStatement ps = connection.prepareStatement("INSERT INTO reservations VALUES (?,?,?,?,?,?,?,?)");
 			ps.setInt(1, confNo);
 			ps.setString(2, model.getVtname());
-			ps.setInt(3, model.getDlicense());
-			ps.setDate(4, model.getFromDate());
-			ps.setTime(5, model.getFromTime());
-			ps.setDate(6, model.getToDate());
-			ps.setTime(7, model.getToTime());
+			ps.setString(3, vlicense);
+			ps.setInt(4, model.getDlicense());
+			ps.setDate(5, model.getFromDate());
+			ps.setTime(6, model.getFromTime());
+			ps.setDate(7, model.getToDate());
+			ps.setTime(8, model.getToTime());
 
 			ps.executeUpdate();
 			connection.commit();
@@ -299,6 +300,9 @@ public class DatabaseConnectionHandler {
 		}	
 	}
 	
+	
+	// keep the following two functions
+
 	public boolean login(String username, String password) {
 		try {
 			if (connection != null) {
