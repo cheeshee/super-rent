@@ -9,6 +9,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import ca.ubc.cs304.model.BranchModel;
+import ca.ubc.cs304.model.VehiclesModel;
 
 /**
  * This class handles all database related transactions
@@ -82,6 +83,69 @@ public class DatabaseConnectionHandler {
 		}
 	}
 	
+	// TRY TO MAKE A QUERY
+	// View the number of available vehicles for a specific car type, location, and time interval.
+	// The user should be able to provide any subset of {car type, location, time interval} to
+	// view the available vehicles. If the user provides no information, your application should
+	// automatically return a list of all vehicles (at that branch) sorted in some reasonable way
+	// for the user to peruse.
+
+
+	/*
+	 * getAvailable Vehicles returns an array of VehiclesModel
+	 * the specifics which is a string array where indices 0, 1, 2, 4 
+	 * correspond to car type, location, time interval fromDate, toDate respectively
+	 */
+	public VehiclesModel[] getAvailableVehicles(String[] specifics) {
+		ArrayList<VehiclesModel> result = new ArrayList<>();
+
+		try{
+			Statement stmt = connection.createStatement();
+			String executeString = "SELECT * FROM vehicles WHERE status = \"available\"";
+			if (specifics[0] != null) {
+				executeString += " AND vtname = " + specifics[0];
+			}
+			if (specifics[1] != null) {
+				executeString += " AND location = " + specifics[1];
+			}
+			if (specifics[2] != null && specifics[3] != null) {
+				executeString += " AND vlicense NOT IN (SELECT vlicense FROM reservations WHERE fromDate = " + specifics[2] + " AND toDate = " + specifics[3] + ")"; 
+			}
+			executeString = executeString + " GROUP BY ";
+			if (specifics[0] != null) {
+				executeString += "vtname";
+			} else if (specifics[1] != null) {
+				executeString += "location";
+			} else {
+				// return in order of availability otherwise
+				executeString += "fromDate";
+			}
+			ResultSet rs = stmt.executeQuery(executeString);
+			
+			while(rs.next()) {
+				VehiclesModel model = new VehiclesModel(rs.getString("vehicles_vlicense"),
+													rs.getString("vehicles_make"),
+													rs.getString("vehicles_model"),
+													rs.getInt("vehicles_year"),
+													rs.getString("vehicles_color"),
+													rs.getInt("vehicles_odometer"),
+													rs.getString("vehicles_status"),
+													rs.getString("vehicles_vtname"),
+													rs.getString("vehicles_location"),
+													rs.getString("vehicles_city"));
+				result.add(model);
+			}
+
+			rs.close();
+			stmt.close();
+		}catch (SQLException e) {
+			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+			rollbackConnection();
+		}	
+
+		return result.toArray(new VehiclesModel[result.size()]);
+	}
+
 	public BranchModel[] getBranchInfo() {
 		ArrayList<BranchModel> result = new ArrayList<BranchModel>();
 		
