@@ -57,7 +57,7 @@
         <entry file="file://$PROJECT_DIR$/src/ca/ubc/cs304/database/DatabaseConnectionHandler.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="283">
-              <caret line="215" lean-forward="true" selection-start-line="215" selection-end-line="215" />
+              <caret line="306" lean-forward="true" selection-start-line="306" selection-end-line="306" />
             </state>
           </provider>
         </entry>
@@ -164,7 +164,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1574124266428" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1574138524536" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -291,7 +291,7 @@
     <entry file="file://$PROJECT_DIR$/src/ca/ubc/cs304/database/DatabaseConnectionHandler.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="283">
-          <caret line="215" lean-forward="true" selection-start-line="215" selection-end-line="215" />
+          <caret line="306" lean-forward="true" selection-start-line="306" selection-end-line="306" />
         </state>
       </provider>
     </entry>

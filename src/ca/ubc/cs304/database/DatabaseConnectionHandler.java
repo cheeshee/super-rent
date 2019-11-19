@@ -1,14 +1,22 @@
 package ca.ubc.cs304.database;
 
+import java.io.ObjectInputFilter.Config;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Time;
+import java.sql.Types;
 import java.util.ArrayList;
 
+import javax.security.auth.callback.ConfirmationCallback;
+
 import ca.ubc.cs304.model.BranchModel;
+import ca.ubc.cs304.model.CustomersModel;
+import ca.ubc.cs304.model.ReservationsModel;
 import ca.ubc.cs304.model.VehiclesModel;
 
 /**
@@ -93,33 +101,38 @@ public class DatabaseConnectionHandler {
 
 	/*
 	 * getAvailable Vehicles returns an array of VehiclesModel
-	 * the specifics which is a string array where indices 0, 1, 2, 4 
-	 * correspond to car type, location, time interval fromDate, toDate respectively
+	 * takes car type, location, time interval fromDate, fromTime, toDate, toTime
 	 */
-	public VehiclesModel[] getAvailableVehicles(String[] specifics) {
+	public VehiclesModel[] getAvailableVehicles(String vtname, String location, Date fromDate, Time fromTime, Date toDate, Time toTime) {
 		ArrayList<VehiclesModel> result = new ArrayList<>();
 
 		try{
 			Statement stmt = connection.createStatement();
 			String executeString = "SELECT * FROM vehicles WHERE status = \"available\"";
-			if (specifics[0] != null) {
-				executeString += " AND vtname = " + specifics[0];
+			if (vtname != null) {
+				executeString += " AND vtname = " + vtname;
 			}
-			if (specifics[1] != null) {
-				executeString += " AND location = " + specifics[1];
+			if (location != null) {
+				executeString += " AND location = " + location;
 			}
-			if (specifics[2] != null && specifics[3] != null) {
-				executeString += " AND vlicense NOT IN (SELECT vlicense FROM reservations WHERE fromDate = " + specifics[2] + " AND toDate = " + specifics[3] + ")"; 
+			if (fromDate != null && fromTime != null && toDate != null && toTime != null) {
+				executeString += " AND vlicense NOT IN (SELECT vlicense FROM reservations WHERE (fromDate > " + fromDate + 
+																								"AND fromDate < " + toDate + 
+																								") OR (toDate > " + fromDate + 
+																								"AND toDate < " + toDate + 
+																								" ) OR (fromDate = " + fromDate + 
+																								"AND fromTime >= " + fromTime + 
+																								" ) OR (fromDate = " + toDate + 
+																								"AND fromTime <= " + toTime + 																								
+																								" ) OR (toDate = " + fromDate + 
+																								"AND toTime >= " + fromTime + 
+																								" ) OR (toDate = " + toDate + 
+																								"AND toTime <= " + toTime + 
+																								"))"; 
 			}
-			executeString = executeString + " GROUP BY ";
-			if (specifics[0] != null) {
-				executeString += "vtname";
-			} else if (specifics[1] != null) {
-				executeString += "location";
-			} else {
-				// return in order of availability otherwise
-				executeString += "fromDate";
-			}
+			
+			// order by location
+			executeString += " GROUP BY location";
 			ResultSet rs = stmt.executeQuery(executeString);
 			
 			while(rs.next()) {
@@ -143,8 +156,92 @@ public class DatabaseConnectionHandler {
 			rollbackConnection();
 		}	
 
+		// result.size() would just be the number of available cars, use that in handler
 		return result.toArray(new VehiclesModel[result.size()]);
 	}
+
+	// If a customer is new, add the customer’s details to the database.
+
+	/*
+	 *	insertCustomer adds a new customer to the customers table in the database
+	 *  takes a customersModel
+	 */
+	public void insertCustomer(CustomersModel model) {
+		try {
+			PreparedStatement ps = connection.prepareStatement("INSERT INTO customers VALUES (?,?,?,?)");
+			ps.setInt(1, model.getDlicense());
+			ps.setString(2, model.getName());
+			if (model.getCellphone() == 0) {
+				ps.setNull(3, java.sql.Types.INTEGER);
+			} else {
+				ps.setInt(3, model.getCellphone());
+			}
+			if (model.getAddress() == null) {
+				ps.setNull(4, java.sql.Types.VARCHAR);
+			} else {
+				ps.setString(4, model.getAddress());
+			}
+
+			ps.executeUpdate();
+			connection.commit();
+
+			ps.close();
+		} catch (SQLException e) {
+			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+			rollbackConnection();
+		}
+	}
+
+	// Upon successful completion, a confirmation number for the reservation should be
+	// shown along with the details entered during the reservation. Refer to the project
+	// description for details on what kind of information the user needs to provide when
+	// making a reservation.
+	// If the customer’s desired vehicle is not available, an appropriate error message should
+	// be shown.
+
+	/*
+	 * insertReservation returns the confNo which in our case is simply the
+	 * order that the reservation was made
+	 * returns 0 if there are no cars available
+	 */
+	public int insertReservation(ReservationsModel model) {
+		int confNo = 0;
+		try {
+
+			// see if there's an available vehicle
+			VehiclesModel[] available;
+			String vlicense;
+			available = getAvailableVehicles(model.getVtname(), null, model.getFromDate(), model.getFromTime(), model.getToDate(), model.getToTime());
+			if (available.length == 0) {
+				return confNo;
+			} else {
+				vlicense = available[0].getVlicense();
+			}
+			// figure out confNo?
+			Statement stmt = connection.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM reservations");
+			confNo = rs.getInt(1) + 1;	// should return just an int
+
+			PreparedStatement ps = connection.prepareStatement("INSERT INTO reservations VALUES (?,?,?,?,?,?,?)");
+			ps.setInt(1, confNo);
+			ps.setString(2, model.getVtname());
+			ps.setInt(3, model.getDlicense());
+			ps.setDate(4, model.getFromDate());
+			ps.setTime(5, model.getFromTime());
+			ps.setDate(6, model.getToDate());
+			ps.setTime(7, model.getToTime());
+
+			ps.executeUpdate();
+			connection.commit();
+
+			ps.close();
+		} catch (SQLException e) {
+			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+			rollbackConnection();
+		}
+		return confNo;
+	}
+
 
 	public BranchModel[] getBranchInfo() {
 		ArrayList<BranchModel> result = new ArrayList<BranchModel>();
