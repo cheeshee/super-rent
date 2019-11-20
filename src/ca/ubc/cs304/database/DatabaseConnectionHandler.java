@@ -10,14 +10,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Types;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import javax.security.auth.callback.ConfirmationCallback;
 
-import ca.ubc.cs304.model.BranchModel;
-import ca.ubc.cs304.model.CustomersModel;
-import ca.ubc.cs304.model.ReservationsModel;
-import ca.ubc.cs304.model.VehiclesModel;
+import ca.ubc.cs304.model.*;
 
 /**
  * This class handles all database related transactions
@@ -241,6 +239,147 @@ public class DatabaseConnectionHandler {
 			rollbackConnection();
 		}
 		return confNo;
+	}
+
+	/*
+	 * clerkRentVehicle returns a receipt with a lot of info for the
+	 * rental that was made
+	 * returns a message if there are no cars currently available
+	 */
+	public String clerkRentVehicle(RentalsModel rentmodel, ReservationsModel reservemodel){
+		String receipt = "";
+
+		try{
+
+			int check = insertReservation(reservemodel);	//Do a reservation first to check all the things such as carmodel etc...
+			if (check == 0){
+				return "sorry no cars available to rent";
+			}
+
+
+			PreparedStatement ps = connection.prepareStatement("INSERT INTO rentals VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
+
+			//VERY NOT SURE WHICH ONES ARE AVAIBLE ATM ESPECIALLY ODOMETER
+			ps.setInt(1,rentmodel.getRid());
+			ps.setString(2, rentmodel.getVlicense());
+			ps.setInt(3, rentmodel.getDlicense());
+			ps.setDate(4, rentmodel.getFromDate());
+			ps.setTime(5, rentmodel.getFromTime());
+			ps.setDate(6, rentmodel.getToDate());
+			ps.setTime(7, rentmodel.getToTime());
+			ps.setInt(8, rentmodel.getOdometer());
+			ps.setString(9, rentmodel.getCardName());
+			ps.setInt(10, rentmodel.getCardNo());
+			ps.setDate(11, rentmodel.getExpDate());
+			ps.setInt(12, rentmodel.getConfNo());
+
+			ps.executeUpdate();
+			connection.commit();
+
+			ps.close();
+
+			//builds receipt string
+			receipt = receipt + "Confirmation Number: " + rentmodel.getConfNo()
+					          + "\nReserve date: " + java.time.LocalDateTime.now()
+							  + "\nType of car: " + reservemodel.getVtname()
+					          + "\nAt: " + ""//TODO location
+					          + "\nFrom " + rentmodel.getFromDate() + " To " + rentmodel.getToDate()
+							  + "\n" + rentmodel.getFromTime() + " To " + rentmodel.getToTime();
+
+
+
+		} catch (SQLException e) {
+			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+			rollbackConnection();
+		}
+
+		return receipt;
+
+
+	}
+	/*
+	clerkReturnVehicle returns a receipt with information for the customer
+	first checks to see if the rid exists in Returns
+	throws a SQL exception if the car has not been taken out
+	 */
+	public String clerkReturnVehicle(ReturnsModel model) throws SQLException{
+		String receipt = "";
+		int rentalID = model.getRid();
+		try{
+			Statement stmt = connection.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM rentals WHERE rid = " + rentalID);
+			if (rs == null) {
+				throw new SQLException();
+			}
+
+			PreparedStatement ps = connection.prepareStatement("INSERT INTO rentals VALUES (?,?,?,?,?,?)");
+
+			//VERY NOT SURE WHICH ONES ARE AVAIBLE ATM ESPECIALLY ODOMETER
+			ps.setInt(1,model.getRid());
+			ps.setDate(2, model.getDate());
+			ps.setTime(3, model.getTime());
+			ps.setInt(4, model.getOdometer());
+			ps.setInt(5, model.getFulltank());
+			ps.setFloat(6, model.getValue());
+
+			ps.executeUpdate();
+
+			/*TODO Maybe do a delete somewhere
+			 *
+			 *
+			 *
+			 */
+			connection.commit();
+
+			ps.close();
+
+			//builds receipt string
+			receipt = receipt + "Confirmation Number: " + ""//TODO
+					+ "\nDate returned: " + java.time.LocalDateTime.now()
+					+ "\nAt: " + "/TODO some kind of location????" //TODO
+					+ "\nTotal Cost: " + model.getValue();
+
+		} catch (SQLException e) {
+			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+			rollbackConnection();
+		}
+
+		return receipt;
+	}
+	/*
+	clerkGenerateReport generates a set of tuples as laid out in the deliverable outline
+	Put 1: Daily Rentals
+		2: Daily Rentals for Branch
+		3: Daily Returns
+		4: Daily Returns for Branch
+	 */
+	public void clerkGenerateReport(int report, String branchLocation, String branchCity) throws SQLException {
+		try {
+
+			Statement stmt = connection.createStatement();
+			String executeStr = "SELECT * FROM rentals, reservations, vehicles, returns WHERE ";
+			switch (report) {
+				case 1:
+					executeStr = executeStr + "fromDate = " + java.time.LocalDateTime.now();
+					break;
+				case 2:
+					executeStr = executeStr + "fromDate = " + java.time.LocalDateTime.now() + " AND location = " + branchLocation + " AND city = " + branchCity;
+					break;
+				case 3:
+					executeStr = executeStr + "date = " + java.time.LocalDateTime.now();
+					break;
+				case 4:
+					executeStr = executeStr + "date = " + java.time.LocalDateTime.now() + " AND location = " + branchLocation + " AND city = " + branchCity;
+					break;
+
+			}
+
+			executeStr += "GROUP BY location,vtname";
+			ResultSet rs = stmt.executeQuery(executeStr);
+			//TODO do something with this rs?
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 
