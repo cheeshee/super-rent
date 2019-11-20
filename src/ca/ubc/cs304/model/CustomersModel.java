@@ -6,10 +6,10 @@ package ca.ubc.cs304.model;
 public class CustomersModel {
   private final int dlicense;
   private final String name;
-  private final int cellphone;
+  private final long cellphone;
   private final String address;
 
-  public CustomersModel(int dlicense, String name, int cellphone, String address) {
+  public CustomersModel(int dlicense, String name, long cellphone, String address) {
     this.dlicense = dlicense;
     this.name = name;
     this.cellphone = cellphone;
@@ -24,7 +24,7 @@ public class CustomersModel {
     return name;
   }
 
-  public int getCellphone() {
+  public long getCellphone() {
     return cellphone;
   }
 

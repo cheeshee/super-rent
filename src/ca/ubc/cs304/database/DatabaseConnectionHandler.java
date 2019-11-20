@@ -170,9 +170,9 @@ public class DatabaseConnectionHandler {
 			ps.setInt(1, model.getDlicense());
 			ps.setString(2, model.getName());
 			if (model.getCellphone() <= 0) {
-				ps.setNull(3, java.sql.Types.BIGINT);
+				ps.setNull(3, java.sql.Types.NUMERIC);
 			} else {
-				ps.setInt(3, model.getCellphone());
+				ps.setObject(3, model.getCellphone());
 			}
 			if (model.getAddress() == null) {
 				ps.setNull(4, java.sql.Types.VARCHAR);

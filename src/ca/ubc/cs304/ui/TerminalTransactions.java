@@ -65,6 +65,7 @@ public class TerminalTransactions {
 					break;
 				case 6:
 					handleInsertCustomer();
+					break;
 				default:
 					System.out.println(WARNING_TAG + " The number that you entered was not a valid option.");
 					break;
@@ -99,9 +100,9 @@ public class TerminalTransactions {
 			dlicense = readInteger(false);
 		}
 
-		int cellphone = INVALID_INPUT;
+		long cellphone = INVALID_INPUT;
 		System.out.print("Please enter your cellphone number: ");
-		dlicense = readInteger(false);
+		cellphone = Long.parseLong(readLine());
 		if (cellphone == INVALID_INPUT) {
 			cellphone = -1;
 		}
@@ -115,6 +116,7 @@ public class TerminalTransactions {
 		CustomersModel model = new CustomersModel(dlicense, name, cellphone, address);
 		delegate.insertCustomer(model);
 	}
+
 
 	private void handleInsertOption() {
 		int id = INVALID_INPUT;
