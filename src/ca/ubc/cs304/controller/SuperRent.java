@@ -4,6 +4,7 @@ import ca.ubc.cs304.database.DatabaseConnectionHandler;
 import ca.ubc.cs304.delegates.LoginWindowDelegate;
 import ca.ubc.cs304.delegates.TerminalTransactionsDelegate;
 import ca.ubc.cs304.model.BranchModel;
+import ca.ubc.cs304.model.CustomersModel;
 import ca.ubc.cs304.ui.LoginWindow;
 import ca.ubc.cs304.ui.TerminalTransactions;
 
@@ -104,7 +105,17 @@ public class SuperRent implements LoginWindowDelegate, TerminalTransactionsDeleg
     		
     		System.out.println();
     	}
-    }
+		}
+		
+			/**
+	 * TermainalTransactionsDelegate Implementation
+	 * 
+	 * Insert a branch with the given info
+	 */
+	public void insertCustomer(CustomersModel model) {
+		dbHandler.insertCustomer(model);
+	}
+
 	
     /**
 	 * TerminalTransactionsDelegate Implementation

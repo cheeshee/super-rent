@@ -1,6 +1,7 @@
 package ca.ubc.cs304.delegates;
 
 import ca.ubc.cs304.model.BranchModel;
+import ca.ubc.cs304.model.CustomersModel;
 
 /**
  * This interface uses the delegation design pattern where instead of having
@@ -17,5 +18,8 @@ public interface TerminalTransactionsDelegate {
 	public void showBranch();
 	public void updateBranch(int branchId, String name);
 	
+	// SuperRent methods
+	public void insertCustomer(CustomersModel model);
+
 	public void terminalTransactionsFinished();
 }

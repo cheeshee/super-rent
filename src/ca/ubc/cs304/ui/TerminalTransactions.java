@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 
 import ca.ubc.cs304.delegates.TerminalTransactionsDelegate;
 import ca.ubc.cs304.model.BranchModel;
+import ca.ubc.cs304.model.CustomersModel;
 
 /**
  * The class is only responsible for handling terminal text inputs. 
@@ -38,6 +39,7 @@ public class TerminalTransactions {
 			System.out.println("3. Update branch name");
 			System.out.println("4. Show branch");
 			System.out.println("5. Quit");
+			System.out.println("6. TEST insertCustomer");
 			System.out.print("Please choose one of the above 5 options: ");
 
 			choice = readInteger(false);
@@ -61,6 +63,8 @@ public class TerminalTransactions {
 				case 5:
 					handleQuitOption();
 					break;
+				case 6:
+					handleInsertCustomer();
 				default:
 					System.out.println(WARNING_TAG + " The number that you entered was not a valid option.");
 					break;
@@ -80,6 +84,38 @@ public class TerminalTransactions {
 		}
 	}
 	
+	// HANDLER FOR insertCustomer
+
+	private void handleInsertCustomer() {
+		String name = null;
+		while (name == null || name.length() <= 0) {
+			System.out.print("Please enter your name: ");
+			name = readLine().trim();
+		}
+		
+		int dlicense = INVALID_INPUT;		
+		while (dlicense == INVALID_INPUT) {
+			System.out.print("Please enter your driver's license: ");
+			dlicense = readInteger(false);
+		}
+
+		int cellphone = INVALID_INPUT;
+		System.out.print("Please enter your cellphone number: ");
+		dlicense = readInteger(false);
+		if (cellphone == INVALID_INPUT) {
+			cellphone = -1;
+		}
+
+		System.out.print("Please enter your address: ");
+		String address = readLine().trim();
+		if (address.length() == 0) {
+			address = null;
+		}
+
+		CustomersModel model = new CustomersModel(dlicense, name, cellphone, address);
+		delegate.insertCustomer(model);
+	}
+
 	private void handleInsertOption() {
 		int id = INVALID_INPUT;
 		while (id == INVALID_INPUT) {
