@@ -12,14 +12,12 @@ import ca.ubc.cs304.model.CustomersModel;
  * TerminalTransactions calls the methods that we have listed below but 
  * SuperRent is the actual class that will implement the methods.
  */
-public interface TerminalTransactionsDelegate {
+public interface ManipulationDelegate {
 	public void deleteBranch(int branchId);
 	public void insertBranch(BranchModel model);
 	public void showBranch();
 	public void updateBranch(int branchId, String name);
-	
-	// SuperRent methods
-	public void insertCustomer(CustomersModel model);
 
-	public void terminalTransactionsFinished();
+
+//	public void terminalTransactionsFinished();
 }

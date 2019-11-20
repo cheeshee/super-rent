@@ -2,16 +2,17 @@ package ca.ubc.cs304.controller;
 
 import ca.ubc.cs304.database.DatabaseConnectionHandler;
 import ca.ubc.cs304.delegates.LoginWindowDelegate;
-import ca.ubc.cs304.delegates.TerminalTransactionsDelegate;
+import ca.ubc.cs304.delegates.ManipulationDelegate;
+import ca.ubc.cs304.delegates.ServiceDelegate;
 import ca.ubc.cs304.model.BranchModel;
 import ca.ubc.cs304.model.CustomersModel;
 import ca.ubc.cs304.ui.LoginWindow;
-import ca.ubc.cs304.ui.TerminalTransactions;
+import ca.ubc.cs304.ui.Manipulation;
 
 /**
  * This is the main controller class that will orchestrate everything.
  */
-public class SuperRent implements LoginWindowDelegate, TerminalTransactionsDelegate {
+public class SuperRent implements LoginWindowDelegate, ManipulationDelegate, ServiceDelegate {
 	private DatabaseConnectionHandler dbHandler = null;
 	private LoginWindow loginWindow = null;
 
@@ -36,7 +37,7 @@ public class SuperRent implements LoginWindowDelegate, TerminalTransactionsDeleg
 			// Once connected, remove login window and start text transaction flow
 			loginWindow.dispose();
 
-			TerminalTransactions transaction = new TerminalTransactions();
+			Manipulation transaction = new Manipulation();
 			transaction.showMainMenu(this);
 		} else {
 			loginWindow.handleLoginFailed();
