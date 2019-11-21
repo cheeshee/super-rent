@@ -47,6 +47,8 @@ public class SuperRent implements LoginWindowDelegate, Delegate {
 
     // TODO: backend step 2: declare function here which you add in Delegate interface
     /**services functions*/
+    // function1
+    // function2
 
 
 
@@ -59,6 +61,9 @@ public class SuperRent implements LoginWindowDelegate, Delegate {
         System.out.println("in super-rent viewCustomer");
         return dbHandler.viewCustomer();
     }
+
+    // function1
+    // function2
 
 	public static void main(String args[]) {
 		SuperRent SuperRent = new SuperRent();
