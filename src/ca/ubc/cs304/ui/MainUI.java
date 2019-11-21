@@ -7,7 +7,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import ca.ubc.cs304.model.*;
+import ca.ubc.cs304.delegates.Delegate;
+import ca.ubc.cs304.model.ModelForManipulation.*;
+import ca.ubc.cs304.model.ModelForService.*;
 
 import static javax.swing.JFrame.EXIT_ON_CLOSE;
 
@@ -19,13 +21,15 @@ public class MainUI {
     private CardLayout cardLayout;
     private JPanel cards;
 
+    private Delegate delegate;
+
 
     // buttons on the main page
     private JButton servicebtn = new JButton("Services");
     private JButton manipulationbtn = new JButton("Manipulations");
     private JButton quitbtn = new JButton("Quit");
 
-    private Font myFont = new Font("SansSerif", Font.BOLD, 40);
+    public static Font myFont = new Font("SansSerif", Font.BOLD, 40);
 
     //initialize 'service' card
     private ServicePanel servicePane;
@@ -34,6 +38,11 @@ public class MainUI {
     private ManipulationPanel manipulationPane;
 
     public MainUI(){
+
+    }
+
+    public void showMainUI(Delegate delegate) {
+        this.delegate = delegate;
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         frame.setVisible(true);
         frame.setResizable(true);
@@ -64,7 +73,7 @@ public class MainUI {
 
     /**preparation for cards*/
     private JPanel cardHome() {
-        JPanel cardHome = new JPanel();
+        JPanel cardHome = new JPanel(new GridLayout(2,1));
         JPanel labelPanel_Home = new JPanel();
         labelPanel_Home.setOpaque(false);
         JLabel label_Home = new JLabel("what do you want to do with Super Rent?");
@@ -89,10 +98,10 @@ public class MainUI {
         cardHome.add(buttonPanel_Home, BorderLayout.CENTER);
         cardHome.setOpaque(false);
 
-        return  cardHome;
+        return cardHome;
     }
     private JPanel cardManipulation() {
-        manipulationPane = new ManipulationPanel();
+        manipulationPane = new ManipulationPanel(this.delegate);
         return manipulationPane.getManipulationPanel();
     }
     private JPanel cardService() {
