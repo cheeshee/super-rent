@@ -1,24 +1,31 @@
 package ca.ubc.cs304.ui;
 
-import ca.ubc.cs304.handler.Manipulation;
-
+import javax.management.Query;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import ca.ubc.cs304.handler.Manipulation;
+import ca.ubc.cs304.model.InsertCustomerQueryModel;
+import ca.ubc.cs304.model.QueryModel;
+
 public class ManipulationPanel {
-    // handling for data
+
+    /**step 2: assume the user choose the manipulation
+     * then the project will jump to this part*/
     private Manipulation manipulation = new Manipulation();
+
+    private QueryModel query;
 
     //fields for cards
     private CardLayout cardLayout = new CardLayout();
     private JPanel cards = new JPanel(cardLayout);
-        // initialize mChoice = 0
-        private int mChoice=0;
 
     // fields for card manipulation Home
     private JPanel cardMHome = new JPanel();
+
+    /**step 3: assume the user click the INSERT button*/
     private JButton homeMInsertBtn = new JButton("INSERT");
     private JButton homeMDeleteBtn = new JButton("DELETE");
     private JButton homeMUpdateBtn = new JButton("UPDATE");
@@ -87,7 +94,6 @@ public class ManipulationPanel {
     public JButton getHomeMBackBtn() {return this.homeMBackBtn;}
 
 
-    public int getmChoice() {return this.mChoice;}
     public String getInsertInput() {return this.insertInput;}
     public String getDeleteInput() {return this.deleteInput;}
     public String getUpdateInput() {return this.updateInput;}
@@ -129,8 +135,6 @@ public class ManipulationPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try{
-                    mChoice = 1;
-                    manipulation.setChoice(1);
                     cardLayout.show(cards,"cardInsert");
                 }catch (Exception ex){
                     JOptionPane.showMessageDialog(null, "error: INSERT BUTTON!");
@@ -143,8 +147,7 @@ public class ManipulationPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try{
-                    mChoice=2;
-                    manipulation.setChoice(2);
+
                     cardLayout.show(cards,"cardDelete");
                 }catch (Exception ex){
                     JOptionPane.showMessageDialog(null, "error: DELETE BUTTON!");
@@ -157,8 +160,7 @@ public class ManipulationPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try{
-                    mChoice=3;
-                    manipulation.setChoice(3);
+
                     cardLayout.show(cards,"cardUpdate");
                 }catch (Exception ex){
                     JOptionPane.showMessageDialog(null, "error: UPDATE BUTTON!");
@@ -171,8 +173,7 @@ public class ManipulationPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try{
-                    mChoice=4;
-                    manipulation.setChoice(4);
+
                     cardLayout.show(cards,"cardViewSome");
                 }catch (Exception ex){
                     JOptionPane.showMessageDialog(null, "error: VIEW SOME BUTTON!");
@@ -185,8 +186,7 @@ public class ManipulationPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try{
-                    mChoice=5;
-                    manipulation.setChoice(5);
+
                     cardLayout.show(cards,"cardViewAll");
                 }catch (Exception ex){
                     JOptionPane.showMessageDialog(null, "error: VIEW ALL BUTTON!");
@@ -224,30 +224,61 @@ public class ManipulationPanel {
         return btnPanel;
     }
 
+    private JPanel btnPanel() {
+        JPanel btns = new JPanel();
+        JButton showBefore = new JButton("SHOW BEFORE");
+        showBefore.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try{
+
+                }catch (Exception ex){
+                    JOptionPane.showMessageDialog(null, "error: INSERT BUTTON!");
+                }
+            }
+        });
+
+        JButton showAfter = new JButton("SHOW AFTER");
+
+
+
+        return btns;
+    }
+
     // initialize insert card
     private void initializeCardInsert() {
-        JPanel insertPanel = new JPanel();
+        query = new InsertCustomerQueryModel();
+        JPanel insertPanel = new JPanel(new GridLayout(1,3)); insertPanel.setOpaque(false);
 
-        JPanel part1 = new JPanel(new GridLayout(2,1));
-        JLabel hint1 = new JLabel("please input your insert information");
-        JTextArea text1 = new JTextArea();
-        insertInput = handleInsertInput(text1.getText());
 
+        JPanel left = new JPanel(new GridLayout(2,1));
+        insertPanel.add(left);
+
+        JPanel part1 = new JPanel(new GridLayout(1,2)); part1.setOpaque(false);
+        JLabel hint1 = new JLabel("INSERT INTO");
+        part1.add(hint1);
+        JTextField tName = new JTextField();
+        part1.add(tName);
+
+        JPanel part2 = new JPanel(new GridLayout(1,2)); part2.setOpaque(false);
+        JLabel hint2 = new JLabel("VALUES");
+        part2.add(hint2);
+        JTextField fields = new JTextField();
+        part2.add(fields);
+
+        left.add(part1); left.add(part2);
+        left.setOpaque(false);
+
+
+        //insertInput = handleInsertInput(text1.getText());
+        //manipulation.setInsertCustomerQuery();
 
         JPanel btnPanel = new JPanel();
+
+        cardInsert.add(insertPanel);
+        cardInsert.setOpaque(false);
     }
 
-    // handle user's insert input
-    private String handleInsertInput(String insertText) {
-        String splited=null;
-        try {
-            splited = insertText;
-
-        } catch (Exception ex) {
-
-        }
-        return splited;
-    }
 
     // initialize delete card
     private void initializeCardDelete() {

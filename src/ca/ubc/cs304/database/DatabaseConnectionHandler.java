@@ -26,7 +26,7 @@ public class DatabaseConnectionHandler {
 	private static final String WARNING_TAG = "[WARNING]";
 	
 	private Connection connection = null;
-	
+
 	public DatabaseConnectionHandler() {
 		try {
 			// Load the Oracle JDBC driver
@@ -37,57 +37,102 @@ public class DatabaseConnectionHandler {
 		}
 	}
 	
-	public void close() {
-		try {
-			if (connection != null) {
-				connection.close();
-			}
-		} catch (SQLException e) {
-			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-		}
-	}
+	/**logistics functions*/
+    public boolean login(String username, String password) {
+        try {
+            if (connection != null) {
+                connection.close();
+            }
 
-	public void deleteBranch(int branchId) {
-		try {
-			PreparedStatement ps = connection.prepareStatement("DELETE FROM branch WHERE branch_id = ?");
-			ps.setInt(1, branchId);
-			
-			int rowCount = ps.executeUpdate();
-			if (rowCount == 0) {
-				System.out.println(WARNING_TAG + " Branch " + branchId + " does not exist!");
-			}
-			
-			connection.commit();
-	
-			ps.close();
-		} catch (SQLException e) {
-			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-			rollbackConnection();
-		}
-	}
-	
-	public void insertBranch(BranchModel model) {
-		try {
-			PreparedStatement ps = connection.prepareStatement("INSERT INTO branch VALUES (?,?,?,?,?)");
-			ps.setInt(1, model.getId());
-			ps.setString(2, model.getName());
-			ps.setString(3, model.getAddress());
-			ps.setString(4, model.getCity());
-			if (model.getPhoneNumber() == 0) {
-				ps.setNull(5, java.sql.Types.INTEGER);
-			} else {
-				ps.setInt(5, model.getPhoneNumber());
-			}
+            connection = DriverManager.getConnection(ORACLE_URL, username, password);
+            connection.setAutoCommit(false);
 
-			ps.executeUpdate();
-			connection.commit();
+            System.out.println("\nConnected to Oracle!");
 
-			ps.close();
-		} catch (SQLException e) {
-			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-			rollbackConnection();
-		}
-	}
+
+            return true;
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            return false;
+        }
+    }
+    private void rollbackConnection() {
+        try  {
+            connection.rollback();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        }
+    }
+    public void close() {
+        try {
+            if (connection != null) {
+                connection.close();
+            }
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        }
+    }
+
+    /**manipulation functions*/
+    public void insertCustomer(InsertCustomerQueryModel query) {
+        try {
+            PreparedStatement ps = connection.prepareStatement("INSERT INTO CUSTOMER VALUES (?,?,?,?)");
+            ps.setString(1, query.getDlicense());
+            ps.setString(2,query.getName());
+            ps.setLong(3,query.getCellphone());
+            ps.setString(4,query.getAddress());
+        } catch (Exception e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+    }
+
+    /**service functions*/
+
+
+//	public void deleteBranch(int branchId) {
+//		try {
+//			PreparedStatement ps = connection.prepareStatement("DELETE FROM branch WHERE branch_id = ?");
+//			ps.setInt(1, branchId);
+//
+//			int rowCount = ps.executeUpdate();
+//			if (rowCount == 0) {
+//				System.out.println(WARNING_TAG + " Branch " + branchId + " does not exist!");
+//			}
+//
+//			connection.commit();
+//
+//			ps.close();
+//		} catch (SQLException e) {
+//			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+//			rollbackConnection();
+//		}
+//	}
+
+//	public void insertBranch() {
+//		try {
+//			PreparedStatement ps = connection.prepareStatement("INSERT INTO branch VALUES (?,?,?,?,?)");
+//			ps.setInt(1, model.getId());
+//			ps.setString(2, model.getName());
+//			ps.setString(3, model.getAddress());
+//			ps.setString(4, model.getCity());
+//			if (model.getPhoneNumber() == 0) {
+//				ps.setNull(5, java.sql.Types.INTEGER);
+//			} else {
+//				ps.setInt(5, model.getPhoneNumber());
+//			}
+//
+//			ps.executeUpdate();
+//			connection.commit();
+//
+//			ps.close();
+//		} catch (SQLException e) {
+//			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+//			rollbackConnection();
+//		}
+//	}
+
+
 	
 	// TRY TO MAKE A QUERY
 	// View the number of available vehicles for a specific car type, location, and time interval.
@@ -95,7 +140,6 @@ public class DatabaseConnectionHandler {
 	// view the available vehicles. If the user provides no information, your application should
 	// automatically return a list of all vehicles (at that branch) sorted in some reasonable way
 	// for the user to peruse.
-
 
 	/*
 	 * getAvailable Vehicles returns an array of VehiclesModel
@@ -382,7 +426,6 @@ public class DatabaseConnectionHandler {
 		}
 	}
 
-
 	public BranchModel[] getBranchInfo() {
 		ArrayList<BranchModel> result = new ArrayList<BranchModel>();
 		
@@ -438,34 +481,5 @@ public class DatabaseConnectionHandler {
 			rollbackConnection();
 		}	
 	}
-	
-	
-	// keep the following two functions
 
-	public boolean login(String username, String password) {
-		try {
-			if (connection != null) {
-				connection.close();
-			}
-	
-			connection = DriverManager.getConnection(ORACLE_URL, username, password);
-			connection.setAutoCommit(false);
-	
-			System.out.println("\nConnected to Oracle!");
-
-
-			return true;
-		} catch (SQLException e) {
-			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-			return false;
-		}
-	}
-
-	private void rollbackConnection() {
-		try  {
-			connection.rollback();	
-		} catch (SQLException e) {
-			System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-		}
-	}
 }

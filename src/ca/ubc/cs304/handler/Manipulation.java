@@ -1,29 +1,45 @@
-package ca.ubc.cs304.ui;
+package ca.ubc.cs304.handler;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import ca.ubc.cs304.delegates.ManipulationDelegate;
-import ca.ubc.cs304.model.BranchModel;
-import ca.ubc.cs304.model.CustomersModel;
+import ca.ubc.cs304.model.*;
 
-/**
- * The class is only responsible for handling terminal text inputs.
- */
 public class Manipulation {
+    /**put all the querymodel here*/
+    private InsertCustomerQueryModel insertCustomerQueryModel;
+
+
+    /**for each query, frontend implement setter, backend implement getter*/
+    public void setInsertCustomerQuery (String dlicense, String name, long cellphone, String address) {
+        insertCustomerQueryModel = new InsertCustomerQueryModel();
+        insertCustomerQueryModel.setDlicense(dlicense);
+        insertCustomerQueryModel.setName(name);
+        insertCustomerQueryModel.setCellphone(cellphone);
+        insertCustomerQueryModel.setAddress(address);
+    }
+    public QueryModel getCustomer() {
+        return this.insertCustomerQueryModel;
+    }
+
+
+
+
+
+
+
+
+
+
     private String dlicense = null;
     private List result = null;
+
 
     public void setCustomer(String dlicense, String name) {
         this.dlicense = dlicense;
     }
 
-    public String getCustomer() {
-        return null;
-    }
+
 
     public void setViewAllCustomers(List customers){
 
@@ -32,6 +48,13 @@ public class Manipulation {
     public ArrayList viewAllCustomers(){
         return null;
     }
+    // getAvailableVehicles(String vtname, String location, Date fromDate, Time fromTime, Date toDate, Time toTime) {
+    // insertCustomer(CustomersModel model)
+    // insertReservation(ReservationsModel model)
+    // clerkRentVehicle(RentalsModel rentmodel, ReservationsModel reservemodel)
+    // clerkReturnVehicle(ReturnsModel model)
+    // clerkGenerateReport(int report, String branchLocation, String branchCity)
+
 
 
 

@@ -1,16 +1,13 @@
 package ca.ubc.cs304.ui;
 
-import sun.audio.AudioPlayer;
-import sun.audio.AudioStream;
+
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+
+import ca.ubc.cs304.model.*;
 
 import static javax.swing.JFrame.EXIT_ON_CLOSE;
 
@@ -22,15 +19,13 @@ public class MainUI {
     private CardLayout cardLayout;
     private JPanel cards;
 
+
     // buttons on the main page
     private JButton servicebtn = new JButton("Services");
     private JButton manipulationbtn = new JButton("Manipulations");
     private JButton quitbtn = new JButton("Quit");
-    private JButton playbtn = new JButton();
-    private boolean isPlay;
-    private InputStream music;
-    private AudioStream audios;
-    private Font myFont = new Font("Serif", Font.BOLD, 40);
+
+    private Font myFont = new Font("SansSerif", Font.BOLD, 40);
 
     //initialize 'service' card
     private ServicePanel servicePane;
@@ -67,7 +62,7 @@ public class MainUI {
         layeredPane.setOpaque(true);
     }
 
-    // preparation for cards
+    /**preparation for cards*/
     private JPanel cardHome() {
         JPanel cardHome = new JPanel();
         JPanel labelPanel_Home = new JPanel();
@@ -86,10 +81,6 @@ public class MainUI {
         manipulationbtn.setPreferredSize(new Dimension(120,50));
         buttonPanel_Home.add(manipulationbtn);
 
-        playbtn.setPreferredSize(new Dimension(120,50));
-        playbtn.setText("Music");
-        buttonPanel_Home.add(playbtn);
-        isPlay = false;
 
         quitbtn.setPreferredSize(new Dimension(120,50));
         buttonPanel_Home.add(quitbtn);
@@ -100,18 +91,16 @@ public class MainUI {
 
         return  cardHome;
     }
-
     private JPanel cardManipulation() {
         manipulationPane = new ManipulationPanel();
         return manipulationPane.getManipulationPanel();
     }
-
     private JPanel cardService() {
         servicePane = new ServicePanel();
         return servicePane.getServicePanel();
     }
 
-    // logistic functions
+    /**logistic functions*/
     private void setFrameLocation(){
         frame.setSize(background.getIconWidth(),background.getIconHeight());
         frame.setLocation(dim.width/2,dim.height/2);
@@ -152,34 +141,6 @@ public class MainUI {
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.exit(0);
-            }
-        });
-
-        try {
-            music = new FileInputStream(new File("src\\bkgMusic.wav"));
-            audios = new AudioStream(music);
-        }catch(IOException e1){
-            JOptionPane.showMessageDialog(null,"error");
-        }
-
-        playbtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    if (!isPlay) {
-                        isPlay = true;
-                        playbtn.setText("sounds on");
-                        System.out.println("isPlay state = " + isPlay);
-                        AudioPlayer.player.start(audios);
-                    }else if (isPlay) {
-                        isPlay = false;
-                        playbtn.setText("sounds off");
-                        System.out.println("isPlay state = " + isPlay);
-                        AudioPlayer.player.stop(audios);
-                    }
-                } catch (Exception e1) {
-                    JOptionPane.showMessageDialog(null, "error");
-                }
             }
         });
 

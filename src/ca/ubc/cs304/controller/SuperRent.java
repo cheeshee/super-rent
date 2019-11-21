@@ -1,20 +1,23 @@
 package ca.ubc.cs304.controller;
 
-import ca.ubc.cs304.database.DatabaseConnectionHandler;
-import ca.ubc.cs304.delegates.LoginWindowDelegate;
-import ca.ubc.cs304.delegates.ManipulationDelegate;
-import ca.ubc.cs304.delegates.ServiceDelegate;
-import ca.ubc.cs304.model.BranchModel;
-import ca.ubc.cs304.model.CustomersModel;
-import ca.ubc.cs304.ui.LoginWindow;
-import ca.ubc.cs304.ui.Manipulation;
+import ca.ubc.cs304.database.*;
+import ca.ubc.cs304.delegates.*;
+import ca.ubc.cs304.handler.*;
+import ca.ubc.cs304.model.*;
+import ca.ubc.cs304.ui.*;
+
 
 /**
  * This is the main controller class that will orchestrate everything.
  */
-public class SuperRent implements LoginWindowDelegate, ManipulationDelegate, ServiceDelegate {
+public class SuperRent implements LoginWindowDelegate{
 	private DatabaseConnectionHandler dbHandler = null;
 	private LoginWindow loginWindow = null;
+
+	// middle part in our diagram
+	private Manipulation manipulation = new Manipulation();
+	private Service service = new Service();
+
 
 	public SuperRent() {
 		dbHandler = new DatabaseConnectionHandler();
@@ -24,12 +27,7 @@ public class SuperRent implements LoginWindowDelegate, ManipulationDelegate, Ser
 		loginWindow = new LoginWindow();
 		loginWindow.showFrame(this);
 	}
-	
-	/**
-	 * LoginWindowDelegate Implementation
-	 * 
-     * connects to Oracle database with supplied username and password
-     */ 
+
 	public void login(String username, String password) {
 		boolean didConnect = dbHandler.login(username, password);
 
@@ -37,11 +35,10 @@ public class SuperRent implements LoginWindowDelegate, ManipulationDelegate, Ser
 			// Once connected, remove login window and start text transaction flow
 			loginWindow.dispose();
 
-			Manipulation transaction = new Manipulation();
-			transaction.showMainMenu(this);
+			/**Step1: show the UI window*/
+            new MainUI();
 		} else {
 			loginWindow.handleLoginFailed();
-
 			if (loginWindow.hasReachedMaxLoginAttempts()) {
 				loginWindow.dispose();
 				System.out.println("You have exceeded your number of allowed attempts");
@@ -49,91 +46,7 @@ public class SuperRent implements LoginWindowDelegate, ManipulationDelegate, Ser
 			}
 		}
 	}
-	
-	/**
-	 * TermainalTransactionsDelegate Implementation
-	 * 
-	 * Insert a branch with the given info
-	 */
-    public void insertBranch(BranchModel model) {
-    	dbHandler.insertBranch(model);
-    }
 
-    /**
-	 * TermainalTransactionsDelegate Implementation
-	 * 
-	 * Delete branch with given branch ID.
-	 */ 
-    public void deleteBranch(int branchId) {
-    	dbHandler.deleteBranch(branchId);
-    }
-    
-    /**
-	 * TermainalTransactionsDelegate Implementation
-	 * 
-	 * Update the branch name for a specific ID
-	 */
-
-    public void updateBranch(int branchId, String name) {
-    	dbHandler.updateBranch(branchId, name);
-    }
-
-    /**
-	 * TermainalTransactionsDelegate Implementation
-	 * 
-	 * Displays information about varies SuperRent branches.
-	 */
-    public void showBranch() {
-    	BranchModel[] models = dbHandler.getBranchInfo();
-    	
-    	for (int i = 0; i < models.length; i++) {
-    		BranchModel model = models[i];
-    		
-    		// simplified output formatting; truncation may occur
-    		System.out.printf("%-10.10s", model.getId());
-    		System.out.printf("%-20.20s", model.getName());
-    		if (model.getAddress() == null) {
-    			System.out.printf("%-20.20s", " ");
-    		} else {
-    			System.out.printf("%-20.20s", model.getAddress());
-    		}
-    		System.out.printf("%-15.15s", model.getCity());
-    		if (model.getPhoneNumber() == 0) {
-    			System.out.printf("%-15.15s", " ");
-    		} else {
-    			System.out.printf("%-15.15s", model.getPhoneNumber());
-    		}
-    		
-    		System.out.println();
-    	}
-		}
-		
-			/**
-	 * TermainalTransactionsDelegate Implementation
-	 * 
-	 * Insert a branch with the given info
-	 */
-	public void insertCustomer(CustomersModel model) {
-		dbHandler.insertCustomer(model);
-	}
-
-	
-    /**
-	 * TerminalTransactionsDelegate Implementation
-	 * 
-     * The TerminalTransaction instance tells us that it is done with what it's 
-     * doing so we are cleaning up the connection since it's no longer needed.
-     */ 
-    public void terminalTransactionsFinished() {
-    	dbHandler.close();
-    	dbHandler = null;
-    	
-    	System.exit(0);
-    }
-    
-	/**
-	 * Main method called at launch time
-	 */
 	public static void main(String args[]) {
 		SuperRent SuperRent = new SuperRent();
 		SuperRent.start();
