@@ -1,15 +1,6 @@
 package ca.ubc.cs304.database;
-
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Time;
-import java.util.ArrayList;
-
+import java.sql.*;
+import java.util.*;
 import ca.ubc.cs304.model.ModelForManipulation.*;
 import ca.ubc.cs304.model.ModelForService.*;
 
@@ -33,6 +24,65 @@ public class DatabaseConnectionHandler {
         }
     }
 
+    /**manipulation functions*/
+    /**
+     * insertCustomer adds a new customer to the customers table in the database
+     * takes a customersModel
+     */
+    public void insertCustomer(int dlicense, String name, String cellphone, String address) {
+        try {
+            System.out.println("before insert");
+            PreparedStatement ps = connection.prepareStatement("INSERT INTO ORA_BOLIN1.CUSTOMER VALUES (?,?,?,?)");
+            System.out.println("after insert");
+            ps.setInt(1, dlicense);
+            ps.setString(2, name);
+
+            if (cellphone == null) {
+                ps.setNull(3, java.sql.Types.INTEGER);
+            } else {
+                ps.setLong(3, Long.parseLong(cellphone));
+            }
+
+            if (address == null) {
+                ps.setNull(4, java.sql.Types.INTEGER);
+            } else {
+                ps.setString(4, address);
+            }
+
+            ps.executeUpdate();
+            connection.commit();
+
+            ps.close();
+        } catch (Exception e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+    }
+    public ManipulateCustomersModel[] viewCustomer() {
+        System.out.println("in dbhandler viewCustomer");
+        ArrayList<ManipulateCustomersModel> result = new ArrayList<>();
+
+        try {
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM CUSTOMERS");
+            while (rs.next()) {
+                ManipulateCustomersModel model = new ManipulateCustomersModel();
+                model.setDlicense(rs.getInt("dlicense"));
+                model.setName(rs.getString("name"));
+                model.setCellphone(rs.getString("cellphone"));
+                model.setAddress(rs.getString("address"));
+                result.add(model);
+            }
+
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        }
+
+        return result.toArray(new ManipulateCustomersModel[result.size()]);
+    }
+
     /**
      * logistics functions
      */
@@ -53,7 +103,6 @@ public class DatabaseConnectionHandler {
             return false;
         }
     }
-
     private void rollbackConnection() {
         try {
             connection.rollback();
@@ -61,7 +110,6 @@ public class DatabaseConnectionHandler {
             System.out.println(EXCEPTION_TAG + " " + e.getMessage());
         }
     }
-
     public void close() {
         try {
             if (connection != null) {
@@ -75,10 +123,12 @@ public class DatabaseConnectionHandler {
 
     // TODO: backend step 3: do the actual query here for
 
-    /**
-     * service functions
-     */
+    /**service functions*/
     // query 1
+    /**
+     * getAvailable Vehicles returns an array of VehiclesModel
+     * takes car type, location, time interval fromDate, fromTime, toDate, toTime
+     */
     public CustomerGetAvailableVehicleModel[] customerGetAvailableVehicles(String vtname, String location, String fromDate, String toDate) {
         ArrayList<CustomerGetAvailableVehicleModel> result = new ArrayList<>();
 
@@ -99,9 +149,20 @@ public class DatabaseConnectionHandler {
 
     // query 3
     // Fred implemented below FIX IT
+    /**clerkReturnVehicle returns a receipt with information for the customer
+     first checks to see if the rid exists in Returns
+     throws a SQL exception if the car has not been taken out*/
 
     // query 4
     // Fred implemented below FIX IT
+    // you can call other function
+    // you need to set vehicle status to "rented"
+    // check for null value inputs
+    /**
+     * clerkRentVehicle returns a receipt with a lot of info for the
+     * rental that was made
+     * returns a message if there are no cars currently available
+     */
 
 
     /**
@@ -111,7 +172,6 @@ public class DatabaseConnectionHandler {
      3: Daily Returns
      4: Daily Returns for Branch
      */
-
     // query 5
     public ClerkGenerateReportForRentalModel[] clerkGenerateReportForRental() {
         return null;
@@ -168,63 +228,7 @@ public class DatabaseConnectionHandler {
      */
 
 
-
-    /**
-     * manipulation functions
-     */
-    public void insertCustomer(int dlicense, String name, String cellphone, String address) {
-        try {
-            System.out.println("before insert");
-            PreparedStatement ps = connection.prepareStatement("INSERT INTO ORA_BOLIN1.CUSTOMER VALUES (?,?,?,?)");
-            System.out.println("after insert");
-            ps.setInt(1, dlicense);
-            ps.setString(2, name);
-
-            if (cellphone == null) {
-                ps.setNull(3, java.sql.Types.INTEGER);
-            } else {
-                ps.setLong(3, Long.parseLong(cellphone));
-            }
-
-            if (address == null) {
-                ps.setNull(4, java.sql.Types.INTEGER);
-            } else {
-                ps.setString(4, address);
-            }
-
-            ps.executeUpdate();
-            connection.commit();
-
-            ps.close();
-        } catch (Exception e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-            rollbackConnection();
-        }
-    }
-    public ManipulateCustomersModel[] viewCustomer() {
-        System.out.println("in dbhandler viewCustomer");
-
-        ArrayList<ManipulateCustomersModel> result = new ArrayList<>();
-
-        try {
-            Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM ORA_BOLIN1.CUSTOMERS");
-            while (rs.next()) {
-                ManipulateCustomersModel model = new ManipulateCustomersModel();
-                model.setDlicense(rs.getInt("dlicense"));
-                model.setName(rs.getString("name"));
-                model.setCellphone(rs.getString("cellphone"));
-                model.setAddress(rs.getString("address"));
-                result.add(model);
-            }
-
-            rs.close();
-            stmt.close();
-        } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-        }
-
-        return result.toArray(new ManipulateCustomersModel[result.size()]);
+//        return result.toArray(new ManipulateCustomersModel[result.size()]);
 //          get info on ResultSet
 //    		ResultSetMetaData rsmd = rs.getMetaData();
 //
@@ -235,8 +239,6 @@ public class DatabaseConnectionHandler {
 //    			// get column name and print it
 //    			System.out.printf("%-15s", rsmd.getColumnName(i + 1));
 //    		}
-    }
-
 
     /******************************PARTNERS*******************************/
 
@@ -247,98 +249,92 @@ public class DatabaseConnectionHandler {
     // automatically return a list of all vehicles (at that branch) sorted in some reasonable way
     // for the user to peruse.
 
-    /**
-     * getAvailable Vehicles returns an array of VehiclesModel
-     * takes car type, location, time interval fromDate, fromTime, toDate, toTime
-     */
-    public VehiclesModel[] getAvailableVehicles(String vtname, String location, Date fromDate, Time fromTime, Date toDate, Time toTime) {
-        ArrayList<VehiclesModel> result = new ArrayList<>();
 
-        try {
-            Statement stmt = connection.createStatement();
-            String executeString = "SELECT * FROM vehicles WHERE status = \"available\"";
-            if (vtname != null) {
-                executeString += " AND vtname = " + vtname;
-            }
-            if (location != null) {
-                executeString += " AND location = " + location;
-            }
-            if (fromDate != null && fromTime != null && toDate != null && toTime != null) {
-                executeString += " AND vlicense NOT IN (SELECT vlicense FROM reservations WHERE (fromDate > " + fromDate +
-                        "AND fromDate < " + toDate +
-                        ") OR (toDate > " + fromDate +
-                        "AND toDate < " + toDate +
-                        " ) OR (fromDate = " + fromDate +
-                        "AND fromTime >= " + fromTime +
-                        " ) OR (fromDate = " + toDate +
-                        "AND fromTime <= " + toTime +
-                        " ) OR (toDate = " + fromDate +
-                        "AND toTime >= " + fromTime +
-                        " ) OR (toDate = " + toDate +
-                        "AND toTime <= " + toTime +
-                        "))";
-            }
-
-            // order by location
-            executeString += " GROUP BY location";
-            ResultSet rs = stmt.executeQuery(executeString);
-
-            while (rs.next()) {
-                VehiclesModel model = new VehiclesModel();
-                model.setVlicense(rs.getString("vehicles_vlicense"));
-                model.setMake(rs.getString("vehicles_make"));
-                model.setModel(rs.getString("vehicles_model"));
-                model.setYear(rs.getInt("vehicles_year"));
-                model.setColor(rs.getString("vehicles_color"));
-                model.setOdometer(rs.getInt("vehicles_odometer"));
-                model.setStatus(rs.getString("vehicles_status"));
-                model.setVtname(rs.getString("vehicles_vtname"));
-                model.setLocation(rs.getString("vehicles_location"));
-                model.setCity(rs.getString("vehicles_city"));
-                result.add(model);
-            }
-            rs.close();
-            stmt.close();
-        } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-            rollbackConnection();
-        }
-
-        // result.size() would just be the number of available cars, use that in handler
-        return result.toArray(new VehiclesModel[result.size()]);
-    }
+//    public VehiclesModel[] getAvailableVehicles(String vtname, String location, Date fromDate, Time fromTime, Date toDate, Time toTime) {
+//        ArrayList<VehiclesModel> result = new ArrayList<>();
+//
+//        try {
+//            Statement stmt = connection.createStatement();
+//            String executeString = "SELECT * FROM vehicles WHERE status = \"available\"";
+//            if (vtname != null) {
+//                executeString += " AND vtname = " + vtname;
+//            }
+//            if (location != null) {
+//                executeString += " AND location = " + location;
+//            }
+//            if (fromDate != null && fromTime != null && toDate != null && toTime != null) {
+//                executeString += " AND vlicense NOT IN (SELECT vlicense FROM reservations WHERE (fromDate > " + fromDate +
+//                        "AND fromDate < " + toDate +
+//                        ") OR (toDate > " + fromDate +
+//                        "AND toDate < " + toDate +
+//                        " ) OR (fromDate = " + fromDate +
+//                        "AND fromTime >= " + fromTime +
+//                        " ) OR (fromDate = " + toDate +
+//                        "AND fromTime <= " + toTime +
+//                        " ) OR (toDate = " + fromDate +
+//                        "AND toTime >= " + fromTime +
+//                        " ) OR (toDate = " + toDate +
+//                        "AND toTime <= " + toTime +
+//                        "))";
+//            }
+//
+//            // order by location
+//            executeString += " GROUP BY location";
+//            ResultSet rs = stmt.executeQuery(executeString);
+//
+//            while (rs.next()) {
+//                VehiclesModel model = new VehiclesModel();
+//                model.setVlicense(rs.getString("vehicles_vlicense"));
+//                model.setMake(rs.getString("vehicles_make"));
+//                model.setModel(rs.getString("vehicles_model"));
+//                model.setYear(rs.getInt("vehicles_year"));
+//                model.setColor(rs.getString("vehicles_color"));
+//                model.setOdometer(rs.getInt("vehicles_odometer"));
+//                model.setStatus(rs.getString("vehicles_status"));
+//                model.setVtname(rs.getString("vehicles_vtname"));
+//                model.setLocation(rs.getString("vehicles_location"));
+//                model.setCity(rs.getString("vehicles_city"));
+//                result.add(model);
+//            }
+//            rs.close();
+//            stmt.close();
+//        } catch (SQLException e) {
+//            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+//            rollbackConnection();
+//        }
+//
+//        // result.size() would just be the number of available cars, use that in handler
+//        return result.toArray(new VehiclesModel[result.size()]);
+//    }
 
     // If a customer is new, add the customer’s details to the database.
 
-    /**
-     * insertCustomer adds a new customer to the customers table in the database
-     * takes a customersModel
-     */
-    public void insertCustomer(ManipulateCustomersModel model) {
-        try {
-            PreparedStatement ps = connection.prepareStatement("INSERT INTO customers VALUES (?,?,?,?)");
-            ps.setInt(1, Integer.parseInt(model.getDlicense()));
-            ps.setString(2, model.getName());
-            if (Integer.parseInt(model.getCellphone()) <= 0) {
-                ps.setNull(3, java.sql.Types.NUMERIC);
-            } else {
-                ps.setObject(3, model.getCellphone());
-            }
-            if (model.getAddress() == null) {
-                ps.setNull(4, java.sql.Types.VARCHAR);
-            } else {
-                ps.setString(4, model.getAddress());
-            }
 
-            ps.executeUpdate();
-            connection.commit();
-
-            ps.close();
-        } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-            rollbackConnection();
-        }
-    }
+//    public void insertCustomer(ManipulateCustomersModel model) {
+//        try {
+//            PreparedStatement ps = connection.prepareStatement("INSERT INTO customers VALUES (?,?,?,?)");
+//            ps.setInt(1, Integer.parseInt(model.getDlicense()));
+//            ps.setString(2, model.getName());
+//            if (Integer.parseInt(model.getCellphone()) <= 0) {
+//                ps.setNull(3, java.sql.Types.NUMERIC);
+//            } else {
+//                ps.setObject(3, model.getCellphone());
+//            }
+//            if (model.getAddress() == null) {
+//                ps.setNull(4, java.sql.Types.VARCHAR);
+//            } else {
+//                ps.setString(4, model.getAddress());
+//            }
+//
+//            ps.executeUpdate();
+//            connection.commit();
+//
+//            ps.close();
+//        } catch (SQLException e) {
+//            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+//            rollbackConnection();
+//        }
+//    }
 
     // Upon successful completion, a confirmation number for the reservation should be
     // shown along with the details entered during the reservation. Refer to the project
@@ -400,9 +396,7 @@ public class DatabaseConnectionHandler {
     // you can call other function
     // you need to set vehicle status to "rented"
     // check for null value inputs
-    public String[] clerkRentVehicle(int confNo, String vtname, String vlicense, int dlicense,
-                                     String fromDate, String toDate,
-                                     String cardName, String cardNo, String expDate) throws SQLException{
+    public String[] clerkRentVehicle(int confNo, String vtname, String vlicense, int dlicense, String fromDate, String toDate, String cardName, String cardNo, String expDate) throws SQLException{
         String[] receipt = new String[10];
 
         try{//check if confNo exists
@@ -548,8 +542,14 @@ public class DatabaseConnectionHandler {
     }
 
 
+    // public String[] clerkRentVehicle(int confNo, String vtname, String vlicense, int dlicense,
+    //                                 String fromDate, String toDate, int rid, int odometer,
+    //                                 String cardName, String cardNo, String expDate) {
+    //    return null;
+    // }
 
-/**belows are demo examples, including "delete", "insert","getBranchInfo","update" query*/
+
+    /******************belows are demo examples, including "delete", "insert","getBranchInfo","update" query***************/
 //	public void deleteBranch(int branchId) {
 //		try {
 //			PreparedStatement ps = connection.prepareStatement("DELETE FROM branch WHERE branch_id = ?");
