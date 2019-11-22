@@ -4,7 +4,7 @@ import ca.ubc.cs304.database.*;
 import ca.ubc.cs304.delegates.*;
 
 import ca.ubc.cs304.model.ModelForManipulation.ManipulateCustomersModel;
-import ca.ubc.cs304.model.ModelForService.CustomerGetAvailableVehicleModel;
+import ca.ubc.cs304.model.ModelForService.*;
 import ca.ubc.cs304.ui.*;
 
 
@@ -19,12 +19,10 @@ public class SuperRent implements LoginWindowDelegate, Delegate {
     public SuperRent() {
         dbHandler = new DatabaseConnectionHandler();
     }
-
     private void start() {
         loginWindow = new LoginWindow();
         loginWindow.showFrame(this);
     }
-
     public void login(String username, String password) {
         boolean didConnect = dbHandler.login(username, password);
 
@@ -74,6 +72,25 @@ public class SuperRent implements LoginWindowDelegate, Delegate {
         return dbHandler.clerkReturnVehicle(rid, odometer, fulltank);
     }
 
+    // query 5
+    public ClerkGenerateReportForRentalModel[] clerkGenerateReportForRental(){
+        return dbHandler.clerkGenerateReportForRental();
+    }
+
+    // query 6
+    public ClerkGenerateReportForBranchRentalModel[] clerkGenerateReportForBranchRental(){
+        return dbHandler.clerkGenerateReportForBranchRental();
+    }
+
+    // query 7
+    public ClerkGenerateReportForReturnModel[] clerkGenerateReportForReturn() {
+        return dbHandler.clerkGenerateReportForReturn();
+    }
+
+    // query 8
+    public ClerkGenerateReportForBranchReturnModel[] clerkGenerateReportForBranchReturn(){
+        return dbHandler.clerkGenerateReportForBranchReturn();
+    };
 
 
     /**manipulation functions*/
@@ -86,8 +103,6 @@ public class SuperRent implements LoginWindowDelegate, Delegate {
         return dbHandler.viewCustomer();
     }
 
-    // function1
-    // function2
 
 	public static void main(String args[]) {
 		SuperRent SuperRent = new SuperRent();

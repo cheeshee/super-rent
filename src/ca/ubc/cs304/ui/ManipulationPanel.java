@@ -8,15 +8,10 @@ import java.awt.event.ActionListener;
 import ca.ubc.cs304.delegates.Delegate;
 import ca.ubc.cs304.model.ModelForManipulation.*;
 
-import static java.lang.Integer.parseInt;
-import static java.lang.Long.parseLong;
-
-
 public class ManipulationPanel {
 
     /**step 2: assume the user choose the manipulation
      * then the project will jump to this part*/
-    public ManipulateCustomersModel ManipulateCustomersModel = new ManipulateCustomersModel();
 
     //fields for cards
     private CardLayout cardLayout = new CardLayout();
@@ -65,11 +60,11 @@ public class ManipulationPanel {
     private JButton viewAllBackBtn = new JButton("BACK");
 
     // delegate: SuperRent
-    public Delegate delegateInM;
+    public Delegate delegate;
 
     // constructor
     public ManipulationPanel(Delegate delegate) {
-        delegateInM = delegate;
+        this.delegate = delegate;
 
         initializeCardMHome();
         initializeCardInsert();
@@ -112,7 +107,7 @@ public class ManipulationPanel {
         cardMHome.add(initializeMHomeBtnsPanel());
     }
 
-    /**step 5: program now jumps to here*/
+    /**step 4: program now jumps to here*/
     private JPanel initializeMHomeBtnsPanel(){
         GridLayout gd = new GridLayout(2,1);
         gd.setHgap(50); gd.setVgap(20);
@@ -221,13 +216,15 @@ public class ManipulationPanel {
         return btnPanel;
     }
 
-    /**step 6: now the 'card' Insert shows*/
+    /**step 5: now the 'card' Insert shows*/
+    private JPanel panel1, panel2, panel3;
     private JPanel paintInsertTable(String state) {
-        /**step 7: call delegateInM.viewCustomer first time, see the table before insert*/
         // first and third: before insert
-        ManipulateCustomersModel[] ManipulateCustomersModels = delegateInM.viewCustomer();
+        ManipulateCustomersModel[] ManipulateCustomersModels = delegate.viewCustomer();
+        System.out.println("customer number of rows:" + ManipulateCustomersModels.length);
+        System.out.println("in paint insert table");
         JPanel tablePane = new JPanel(new GridLayout(ManipulateCustomersModels.length,1));
-        tablePane.setBorder(BorderFactory.createEmptyBorder(10,20,10,20));
+        tablePane.setBorder(BorderFactory.createEmptyBorder(10,20,10,200));
         tablePane.setOpaque(false);
 
         if (state.equals("before"))
@@ -237,10 +234,12 @@ public class ManipulationPanel {
 
         JLabel hint = new JLabel(state+" insert");
         hint.setBorder(BorderFactory.createEmptyBorder(10,20,10,20));
-        hint.setFont(new Font("SansSerif", Font.BOLD, 30));  tablePane.add(hint);
+        hint.setFont(new Font("SansSerif", Font.BOLD, 30));
+        tablePane.add(hint);
 
         JLabel attr = new JLabel("dlicense      name        cellphone        address");
-        attr.setFont(new Font("SansSerif",Font.BOLD,15));    tablePane.add(attr);
+        attr.setFont(new Font("SansSerif",Font.BOLD,15));
+        tablePane.add(attr);
 
         for (int i = 0; i< ManipulateCustomersModels.length; i++) {
             JLabel aftCustomer = new JLabel();
@@ -253,11 +252,14 @@ public class ManipulationPanel {
         return tablePane;
     }
     private void initializeCardInsert() {
-        cardInsert.add(paintInsertTable("before"));
+        // first: paint "before" table
+        panel1 = paintInsertTable("before");
+        cardInsert.add(panel1);
 
         // second: insert syntax
-        JPanel panel2 = new JPanel(new GridLayout(3,1));
-        panel2.setBorder(BorderFactory.createEmptyBorder(80,10,80,10));
+        /**step 6: once call delegate.insertCustomer, and pass in params*/
+        panel2 = new JPanel(new GridLayout(3,1));
+        panel2.setBorder(BorderFactory.createEmptyBorder(80,80,80,80));
         panel2.setOpaque(false);
         panel2.setVisible(true);
         JPanel part1 = new JPanel(new GridLayout(1,2)); part1.setOpaque(false);
@@ -273,24 +275,36 @@ public class ManipulationPanel {
         JLabel hint3 = new JLabel(" )"); part2.add(hint3);
         part2.setBorder(BorderFactory.createEmptyBorder(20,10,30,10));
 
-        /**step 8: call delegateInM.insertCustomer, and pass in params*/
-        delegateInM.insertCustomer(dlicense.getText().trim(),name.getText().trim(),cellphone.getText().trim(),address.getText().trim());
-        JPanel panel3 = paintInsertTable("after");
-        cardInsert.add(panel3);
-
+        // third
         JPanel btnPanel = new JPanel(new GridLayout(1,2)); btnPanel.setOpaque(false);
         JButton apply = new JButton("APPLY");
         apply.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e){
-                if(dlicense.getText()==""|name.getText() == "") {
+            public void actionPerformed(ActionEvent e) {
+                if(dlicense.getText().trim().equals("")|name.getText().trim().equals("")) {
                     JOptionPane.showMessageDialog(null, "dlicense or name shouldn't be null!");
                 } else {
-                    panel3.setVisible(true);
-                }
+                    /**step 7: once call delegate.insertCustomer, and pass in params*/
+                    delegate.insertCustomer(
+                            Integer.parseInt(dlicense.getText().trim()),
+                            name.getText().trim(),
+                            cellphone.getText().trim(),
+                            address.getText().trim());
+                    // third: paint "after" table
+                    panel3 = paintInsertTable("after");
 
+                }
             }
         });
+
+        JButton show = new JButton("SHOW");
+        show.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e){
+                panel3.setVisible(true);
+            }
+        });
+
         JButton clear = new JButton("CLEAR");
         clear.addActionListener(new ActionListener() {
             @Override
@@ -299,8 +313,12 @@ public class ManipulationPanel {
                 name.setText("");
                 cellphone.setText("");
                 address.setText("");
+                panel1 = new JPanel();
+                panel2 = new JPanel();
+                panel3 = new JPanel();
             }
         });
+
         JButton back = new JButton("BACK");
         back.addActionListener(new ActionListener() {
             @Override
@@ -309,18 +327,22 @@ public class ManipulationPanel {
                 name.setText("");
                 cellphone.setText("");
                 address.setText("");
+                panel1.removeAll();
+                panel2.removeAll();
+                panel3.removeAll();
+
+                panel1 = new JPanel();
+                panel2 = new JPanel();
+                panel3 = new JPanel();
                 cardLayout.show(cards, "cardMHome");
             }
         });
-        btnPanel.add(apply); btnPanel.add(clear); btnPanel.add(back);
+
+        btnPanel.add(apply); btnPanel.add(show); btnPanel.add(clear); btnPanel.add(back);
         panel2.add(part1); panel2.add(part2); panel2.add(btnPanel);
         panel2.setPreferredSize(new Dimension(70,80));
-        //insertPanel.add(panel2);
 
-          /**step 9: if furtherly click APPLY
-           * call delegateInM.viewCustomer the second time, see how the table looks like now*/
-
-
+        cardInsert.add(panel2);cardInsert.add(panel3);
         cardInsert.setOpaque(false);
     }
 
