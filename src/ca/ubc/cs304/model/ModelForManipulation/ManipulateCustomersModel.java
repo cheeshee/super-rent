@@ -4,15 +4,15 @@ package ca.ubc.cs304.model.ModelForManipulation;
  * The intent for this class is to update/store information about a single customer entry
  */
 public class ManipulateCustomersModel {
-  private String dlicense;
+  private int dlicense;
   private String name;
   private String cellphone;
   private String address;
 
   public ManipulateCustomersModel() { }
 
-  public void setDlicense(String dlicense) {this.dlicense = dlicense;}
-  public String getDlicense() {
+  public void setDlicense(int dlicense) {this.dlicense = dlicense;}
+  public int getDlicense() {
     return dlicense;
   }
 

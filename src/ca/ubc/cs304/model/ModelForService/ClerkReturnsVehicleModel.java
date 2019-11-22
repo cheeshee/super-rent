@@ -7,12 +7,18 @@ import java.sql.Time;
  * The intent for this class is to update/store information about a return
  */
 public class ClerkReturnsVehicleModel {
+  // input
   private String rid;
-  private String date;
-  private String time;
   private int odometer;
   private int fulltank;  // either 1 or 0
-  private String value;
+
+
+  // show up in the receipt
+  private int confNo;
+  private String date; // grab the current date in the computer
+  private String location;
+  private float value;
+
 
   public ClerkReturnsVehicleModel() {}
 
@@ -26,11 +32,6 @@ public class ClerkReturnsVehicleModel {
     return date;
   }
 
-  public void setTime(String time) {this.time = time;}
-  public String getTime() {
-    return time;
-  }
-
   public void setOdometer(int odometer) {this.odometer = odometer;}
   public int getOdometer() {
     return odometer;
@@ -41,9 +42,14 @@ public class ClerkReturnsVehicleModel {
     return fulltank;
   }
 
-  public void setValue(String value) { this.value = value;}
-  public String getValue() {
+  public void setValue(float value) { this.value = value;}
+  public float getValue() {
     return value;
   }
+
+  public void setConfNo(int confNo) {this.confNo =confNo; }
+  public int getConfNo() {return this.confNo;}
+
+  //TODO one more set
 
 }

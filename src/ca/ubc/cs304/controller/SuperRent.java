@@ -4,7 +4,7 @@ import ca.ubc.cs304.database.*;
 import ca.ubc.cs304.delegates.*;
 
 import ca.ubc.cs304.model.ModelForManipulation.ManipulateCustomersModel;
-import ca.ubc.cs304.model.ModelForService.CustomerQueryModel;
+import ca.ubc.cs304.model.ModelForService.CustomerGetAvailableVehicleModel;
 import ca.ubc.cs304.ui.*;
 
 
@@ -47,14 +47,38 @@ public class SuperRent implements LoginWindowDelegate, Delegate {
 
     // TODO: backend step 2: declare function here which you add in Delegate interface
     /**services functions*/
-    // function1
-    // function2
+
+    // query 1
+    public CustomerGetAvailableVehicleModel[] customerGetAvailableVehicles(String vtname, String location, String fromDate, String toDate) {
+        return dbHandler.customerGetAvailableVehicles(vtname, location,fromDate,toDate);
+    }
+
+    // query 2
+    public boolean checkCustomerExist (int dlicense) {
+        return dbHandler.checkCustomerExist(dlicense);
+    }
+        // when customer exists
+    public int customerMakeReservation(String vtname, int dlicense, String fromDate, String toDate){
+        return dbHandler.customerMakeReservation(vtname, dlicense, fromDate, toDate);
+    }
+        // when customer doesn't exist, call insertCustomer
+
+    // query 3
+    public String[] clerkRentVehicle(int confNo, String vtname, String vlicense, int dlicense, String fromDate,
+                                     String toDate, int rid, int odometer, String cardName, String cardNo, String expDate) {
+        return dbHandler.clerkRentVehicle(confNo,vtname,vlicense,dlicense, fromDate,toDate,rid, odometer,cardName,cardNo, expDate);
+    }
+
+    // query 4
+    public String[] clerkReturnVehicle(int rid, int odometer, int fulltank) {
+        return dbHandler.clerkReturnVehicle(rid, odometer, fulltank);
+    }
 
 
 
     /**manipulation functions*/
     // for example:
-    public void insertCustomer(String dlicense, String name, String cellphone, String address) {
+    public void insertCustomer(int dlicense, String name, String cellphone, String address) {
         dbHandler.insertCustomer(dlicense, name, cellphone, address);
     }
     public ManipulateCustomersModel[] viewCustomer() {

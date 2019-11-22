@@ -1,11 +1,13 @@
 package ca.ubc.cs304.model.ModelForService;
 
-public class CustomerQueryModel {
+public class CustomerGetAvailableVehicleModel {
     private String vtname;
     private String location;
     private String vlicense;
-    private long fromDate;
-    private long toDate;
+    // DD/MM/YYYY
+
+    private String fromDate;
+    private String toDate;
 
     public void setVtname(String vtname) {
         this.vtname = vtname;
@@ -28,15 +30,15 @@ public class CustomerQueryModel {
         return this.vlicense;
     }
 
-    public void setFromDate(long fromDate) {
+    public void setFromDate(String fromDate) {
         this.fromDate = fromDate;
     }
-    public long getFromDate() {return this.fromDate;}
+    public String getFromDate() {return this.fromDate;}
 
-    public void setToDate(long toDate){
+    public void setToDate(String toDate){
         this.toDate = toDate;
     }
-    public long getToDate(long toDate) {
+    public String getToDate(String toDate) {
         return this.toDate;
     }
 }
