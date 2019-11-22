@@ -1,23 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="41368cdf-7758-4987-a91f-7d1336f03bed" name="Default Changelist" comment="clean">
-      <change afterPath="$PROJECT_DIR$/src/ca/ubc/cs304/ui/ServicePanel.form" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/ca/ubc/cs304/ui/ManipulationPanel$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/ca/ubc/cs304/ui/ManipulationPanel$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/ca/ubc/cs304/ui/ManipulationPanel$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/ca/ubc/cs304/ui/ManipulationPanel$2.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/ca/ubc/cs304/ui/ManipulationPanel$3.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/ca/ubc/cs304/ui/ManipulationPanel$3.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/ca/ubc/cs304/ui/ManipulationPanel$4.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/ca/ubc/cs304/ui/ManipulationPanel$4.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/ca/ubc/cs304/ui/ManipulationPanel$5.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/ca/ubc/cs304/ui/ManipulationPanel$5.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/ca/ubc/cs304/ui/ManipulationPanel$6.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/ca/ubc/cs304/ui/ManipulationPanel$6.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/ca/ubc/cs304/ui/ManipulationPanel$7.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/ca/ubc/cs304/ui/ManipulationPanel$7.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/ca/ubc/cs304/ui/ManipulationPanel$8.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/ca/ubc/cs304/ui/ManipulationPanel$8.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/ca/ubc/cs304/ui/ManipulationPanel$9.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/ca/ubc/cs304/ui/ManipulationPanel$9.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/ca/ubc/cs304/ui/ManipulationPanel.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/ca/ubc/cs304/ui/ManipulationPanel.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ca/ubc/cs304/ui/MainUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ca/ubc/cs304/ui/MainUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ca/ubc/cs304/ui/ManipulationPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ca/ubc/cs304/ui/ManipulationPanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ca/ubc/cs304/ui/ServicePanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ca/ubc/cs304/ui/ServicePanel.java" afterDir="false" />
-    </list>
+    <list default="true" id="41368cdf-7758-4987-a91f-7d1336f03bed" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -177,7 +161,7 @@
       <workItem from="1574366534850" duration="254000" />
       <workItem from="1574366795184" duration="25230000" />
       <workItem from="1574408106727" duration="2137000" />
-      <workItem from="1574410254163" duration="4256000" />
+      <workItem from="1574410254163" duration="4509000" />
     </task>
     <task id="LOCAL-00001" summary="welcome to play!">
       <created>1574307247594</created>
@@ -207,7 +191,14 @@
       <option name="project" value="LOCAL" />
       <updated>1574399623395</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="only edited MainUI, ManipulationPanel, ServicePanel in ui package.">
+      <created>1574414564241</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1574414564241</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -230,6 +221,7 @@
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="welcome to play!" />
     <MESSAGE value="clean" />
-    <option name="LAST_COMMIT_MESSAGE" value="clean" />
+    <MESSAGE value="only edited MainUI, ManipulationPanel, ServicePanel in ui package." />
+    <option name="LAST_COMMIT_MESSAGE" value="only edited MainUI, ManipulationPanel, ServicePanel in ui package." />
   </component>
 </project>
