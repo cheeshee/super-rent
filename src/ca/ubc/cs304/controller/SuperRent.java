@@ -65,8 +65,8 @@ public class SuperRent implements LoginWindowDelegate, Delegate {
 
     // query 3
     public String[] clerkRentVehicle(int confNo, String vtname, String vlicense, int dlicense, String fromDate,
-                                     String toDate, int rid, int odometer, String cardName, String cardNo, String expDate) {
-        return dbHandler.clerkRentVehicle(confNo,vtname,vlicense,dlicense, fromDate,toDate,rid, odometer,cardName,cardNo, expDate);
+                                     String toDate, String cardName, String cardNo, String expDate) {
+        return dbHandler.clerkRentVehicle(confNo,vtname,vlicense,dlicense, fromDate,toDate,cardName,cardNo, expDate);
     }
 
     // query 4

@@ -27,7 +27,7 @@ public interface Delegate {
 
     // query 3
     String[] clerkRentVehicle(int confNo, String vtname, String vlicense, int dlicense, String fromDate,
-                              String toDate, int rid, int odometer, String cardName, String cardNo, String expDate);
+                              String toDate, String cardName, String cardNo, String expDate);
 
 
     // query 4
