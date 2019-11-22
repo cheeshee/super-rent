@@ -24,65 +24,6 @@ public class DatabaseConnectionHandler {
         }
     }
 
-    /**manipulation functions*/
-    /**
-     * insertCustomer adds a new customer to the customers table in the database
-     * takes a customersModel
-     */
-    public void insertCustomer(int dlicense, String name, String cellphone, String address) {
-        try {
-            System.out.println("before insert");
-            PreparedStatement ps = connection.prepareStatement("INSERT INTO ORA_BOLIN1.CUSTOMER VALUES (?,?,?,?)");
-            System.out.println("after insert");
-            ps.setInt(1, dlicense);
-            ps.setString(2, name);
-
-            if (cellphone == null) {
-                ps.setNull(3, java.sql.Types.INTEGER);
-            } else {
-                ps.setLong(3, Long.parseLong(cellphone));
-            }
-
-            if (address == null) {
-                ps.setNull(4, java.sql.Types.INTEGER);
-            } else {
-                ps.setString(4, address);
-            }
-
-            ps.executeUpdate();
-            connection.commit();
-
-            ps.close();
-        } catch (Exception e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-            rollbackConnection();
-        }
-    }
-    public ManipulateCustomersModel[] viewCustomer() {
-        System.out.println("in dbhandler viewCustomer");
-        ArrayList<ManipulateCustomersModel> result = new ArrayList<>();
-
-        try {
-            Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM CUSTOMERS");
-            while (rs.next()) {
-                ManipulateCustomersModel model = new ManipulateCustomersModel();
-                model.setDlicense(rs.getInt("dlicense"));
-                model.setName(rs.getString("name"));
-                model.setCellphone(rs.getString("cellphone"));
-                model.setAddress(rs.getString("address"));
-                result.add(model);
-            }
-
-            rs.close();
-            stmt.close();
-        } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-        }
-
-        return result.toArray(new ManipulateCustomersModel[result.size()]);
-    }
-
     /**
      * logistics functions
      */
@@ -132,6 +73,46 @@ public class DatabaseConnectionHandler {
     public CustomerGetAvailableVehicleModel[] customerGetAvailableVehicles(String vtname, String location, String fromDate, String toDate) {
         ArrayList<CustomerGetAvailableVehicleModel> result = new ArrayList<>();
 
+        try {
+            Statement stmt = connection.createStatement();
+            String executeString = "SELECT * FROM vehicles WHERE status = \'available\'";
+            if (vtname != null) {
+                executeString += " AND vtname = \'" + vtname + "\'";
+            }
+            if (location != null) {
+                executeString += " AND location = \'" + location + "\'";
+            }
+            if (fromDate != null && toDate != null) {
+                executeString += " AND vlicense NOT IN (SELECT vlicense FROM reservations WHERE (fromDate > TO_DATE(\'" + fromDate +
+                        "\',\'DD/MM/YYYY\') AND fromDate < TO_DATE(\'" + toDate +
+                        "\',\'DD/MM/YYYY\')) OR (toDate > TO_DATE(\'" + fromDate +
+                        "AND toDate < TO_DATE(\'" + toDate +
+                        "\',\'DD/MM/YYYY\'))";
+            }
+
+            // order by location
+            executeString += " GROUP BY location";
+            ResultSet rs = stmt.executeQuery(executeString);
+
+            while (rs.next()) {
+                CustomerGetAvailableVehicleModel model = new CustomerGetAvailableVehicleModel();
+                model.setVlicense(rs.getString("vehicles_vlicense"));
+                model.setMake(rs.getString("vehicles_make"));
+                model.setModel(rs.getString("vehicles_model"));
+                model.setYear(rs.getInt("vehicles_year"));
+                model.setColor(rs.getString("vehicles_color"));
+                model.setVtname(rs.getString("vehicles_vtname"));
+                model.setLocation(rs.getString("vehicles_location"));
+                result.add(model);
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+
+        // result.size() would just be the number of available cars, use that in handler
         return result.toArray(new CustomerGetAvailableVehicleModel[result.size()]);
     }
 
@@ -139,11 +120,65 @@ public class DatabaseConnectionHandler {
     public boolean checkCustomerExist(int dlicense) {
         boolean result = false;
 
-
+        try {
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM customers WHERE dlicense = " + dlicense);
+            result = rs.next();
+            stmt.close();
+            rs.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
         return result;
     }
-    public int customerMakeReservation(String vtname, int dlicense, String fromDate, String toDate) {
-        return 0;
+    
+
+    /**
+     * 
+     * @param vtname
+     * @param dlicense
+     * @param fromDate
+     * @param toDate
+     * @return confNo or throws an exception if there's an error
+     */
+    public int customerMakeReservation(String vtname, int dlicense, String fromDate, String toDate) throws SQLException{
+        int confNo = 0;
+        try {
+
+            // see if there's an available vehicle
+            CustomerGetAvailableVehicleModel[] available;
+            String vlicense;
+            available = customerGetAvailableVehicles(vtname, null, fromDate, toDate);
+            if (available.length == 0) {
+                throw new SQLException();
+            } else {
+                vlicense = available[0].getVlicense();
+            }
+            // figure out confNo?
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM reservations");
+            confNo = rs.getInt(1) + 1;    // should return just an int
+            stmt.close();
+            rs.close();
+
+            PreparedStatement ps = connection.prepareStatement("INSERT INTO reservations VALUES (?,?,?,?,?,?,?,?)");
+            ps.setInt(1, confNo);
+            ps.setString(2, vtname);
+            ps.setString(3, vlicense);
+            ps.setInt(4, dlicense);
+            ps.setString(5, "TO_DATE (\'" + fromDate + "\',\'DD/MM/YYYY\')");
+            ps.setString(7, "TO_DATE (\'" + toDate + "\',\'DD/MM/YYYY\')");
+
+            ps.executeUpdate();
+            connection.commit();
+
+            ps.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+        return confNo;
     }
 
 
@@ -152,11 +187,6 @@ public class DatabaseConnectionHandler {
     /**clerkReturnVehicle returns a receipt with information for the customer
      first checks to see if the rid exists in Returns
      throws a SQL exception if the car has not been taken out*/
-    // TODO: for Fred: handle the result and convert all the results to be string[], order: rid, confNo, Date
-    public String[] clerkRentVehicle(int confNo, String vtname, String vlicense, int dlicense, String fromDate,
-                                     String toDate, int rid, int odometer, String cardName, String cardNo, String expDate) {
-	    return null;
-    }
 
     // query 4
     // Fred implemented below FIX IT
@@ -168,10 +198,6 @@ public class DatabaseConnectionHandler {
      * rental that was made
      * returns a message if there are no cars currently available
      */
-    // TODO: for Fred: handle the result and convert all the results to be string[], order: confNo, fromDate, toDate, vtname, location, rentalPeriod
-    public String[] clerkReturnVehicle(int rid, int odometer, int fulltank) {
-        return null;
-    }
 
 
     /**
@@ -236,16 +262,63 @@ public class DatabaseConnectionHandler {
      }
      */
 
-//          get info on ResultSet
-//    		ResultSetMetaData rsmd = rs.getMetaData();
-//
-//    		System.out.println(" ");
-//
-//    		// display column names;
-//    		for (int i = 0; i < rsmd.getColumnCount(); i++) {
-//    			// get column name and print it
-//    			System.out.printf("%-15s", rsmd.getColumnName(i + 1));
-//    		}
+
+
+    /**
+     * manipulation functions
+     */
+    public void insertCustomer(int dlicense, String name, String cellphone, String address) {
+        try {
+            PreparedStatement ps = connection.prepareStatement("INSERT INTO customers VALUES (?,?,?,?)");
+            ps.setInt(1, dlicense);
+            ps.setString(2, name);
+            if (cellphone == null) {
+                ps.setNull(3, java.sql.Types.VARCHAR);
+            } else {
+                ps.setObject(3, cellphone);
+            }
+            if (address == null) {
+                ps.setNull(4, java.sql.Types.VARCHAR);
+            } else {
+                ps.setString(4, address);
+            }
+
+            ps.executeUpdate();
+            connection.commit();
+
+            ps.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+    }
+
+    public ManipulateCustomersModel[] viewCustomer() {
+        //System.out.println("in dbhandler viewCustomer");
+
+        ArrayList<ManipulateCustomersModel> result = new ArrayList<>();
+
+        try {
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM customers");
+            while (rs.next()) {
+                ManipulateCustomersModel model = new ManipulateCustomersModel();
+                model.setDlicense(rs.getInt("dlicense"));
+                model.setName(rs.getString("name"));
+                model.setCellphone(rs.getString("cellphone"));
+                model.setAddress(rs.getString("address"));
+                result.add(model);
+            }
+            
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+        }
+
+        return result.toArray(new ManipulateCustomersModel[result.size()]);
+    }
+
 
     /******************************PARTNERS*******************************/
 
@@ -343,56 +416,159 @@ public class DatabaseConnectionHandler {
 //        }
 //    }
 
-    // Upon successful completion, a confirmation number for the reservation should be
-    // shown along with the details entered during the reservation. Refer to the project
-    // description for details on what kind of information the user needs to provide when
-    // making a reservation.
-    // If the customer’s desired vehicle is not available, an appropriate error message should
-    // be shown.
+    /**
+     * clerkRentVehicle returns a receipt with a lot of info for the
+     * rental that was made
+     * returns a message if there are no cars currently available
+     */
+    // TODO: for Fred: handle the result and convert all the results to be string[], order: confNo, fromDate, toDate, vtname, location, rentalPeriod
+    // you can call other function
+    // you need to set vehicle status to "rented"
+    // check for null value inputs
+    public String[] clerkRentVehicle(int confNo, String vtname, String vlicense, int dlicense, String fromDate, String toDate, String cardName, String cardNo, String expDate) throws SQLException{
+        String[] receipt = new String[10];
+
+        try{//check if confNo exists
+            if (confNo >= 1) {
+
+                Statement stmt = connection.createStatement();
+                ResultSet rs = stmt.executeQuery("SELECT * FROM reservartions WHERE confNo = " + confNo); //QUERY FOR THE RESERVATION
+                if (rs.next() == false){
+                    throw new SQLException();
+                }
+                String lp = rs.getString("vlicense");
+                ResultSet rs0 = stmt.executeQuery("SELECT * FROM vehicles WHERE vlicense = \' lp \' ");
+                if (rs.next() == false){
+                    throw new SQLException();
+                }
+
+                receipt = clerkRentVehicleInsertQuery(rs.getString("license"), rs.getInt("dlicense"), rs.getString("fromDate"), rs.getString("toDate"), rs0.getInt("odometer"), cardName, cardNo,expDate,confNo, rs0.getString("location"), rs0.getString("city"), rs.getString("vtname"));
+                stmt.close();
+            } else {
+
+                //Make a new reservation if there was no reservation
+                int confirmation = customerMakeReservation(vtname, dlicense, fromDate, toDate);    //Do a reservation first to check all the things such as carmodel etc...
+
+                Statement stmt = connection.createStatement();
+                ResultSet rs = stmt.executeQuery("SELECT * FROM reservartions WHERE confNo = " + confNo); //QUERY FOR THE RESERVATION
+                if (!rs.next()){
+                    throw new SQLException();
+                }
+                String lp = rs.getString("vlicense");
+                ResultSet rs0 = stmt.executeQuery("SELECT * FROM vehicles WHERE vlicense = \' lp \' ");
+                if (!rs.next()){
+                    throw new SQLException();
+                }
+
+                receipt = clerkRentVehicleInsertQuery(vlicense, dlicense, fromDate, toDate, rs0.getInt("odometer"), cardName, cardNo,expDate,confNo, rs0.getString("location"), rs0.getString("city"), vtname);
+                stmt.close();
+
+            }
+
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+
+        return receipt;
+
+    }
+
+    private String[] clerkRentVehicleInsertQuery(String vlicense, int dlicense, String fromDate, String toDate, int odometer,
+                                             String cardName, String cardNo, String expDate, int confNo, String location, String city, String vtname ) throws SQLException{
+
+        String[] receipt = new String[10];
+
+        try {
+            ///////////MAKE QUERY FOR CONF NO///////////////////////////////
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT COUNT(*) from rentals");
+            int rid = rs.getInt(1) + 1;
+            stmt.close();
+            ////////////////////////////////////////////////////////////////
+
+            /////////////INSERT QUERY////////////////////////////////////////////////////
+            PreparedStatement ps = connection.prepareStatement("INSERT INTO rentals VALUES (?,?,?,?,?,?,?,?,?,?,?)");
+
+            ps.setInt(1, rid);
+            ps.setString(2, vlicense);
+            ps.setInt(3, dlicense);
+            ps.setString(4, fromDate);
+            ps.setString(5, toDate);
+            ps.setInt(6, odometer);
+            ps.setString(7, cardName);
+            ps.setString(8, cardNo);
+            ps.setString(9, expDate);
+            ps.setInt(10, confNo);
+
+            ps.executeUpdate();
+            connection.commit();
+
+            ps.close();
+            ///////////////////////////////////////////////////////////////////////////////
+
+            //build receipt
+            receipt[0] = Integer.toString(confNo);
+            receipt[1] = fromDate;
+            receipt[2] = vtname;
+            receipt[3] = location;
+            receipt[4] = city;
+
+        } catch (SQLException e){
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+        return receipt;
+    }
 
     /**
-     * insertReservation returns the confNo which in our case is simply the
-     * order that the reservation was made
-     * returns 0 if there are no cars available
+     clerkReturnVehicle returns a receipt with information for the customer
+     first checks to see if the rid exists in Returns
+     throws a SQL exception if the car has not been taken out
      */
-//    public int insertReservation(ReservationsModel model) {
-//        int confNo = 0;
-//        try {
-//
-//            // see if there's an available vehicle
-//            VehiclesModel[] available;
-//            String vlicense;
-//            available = getAvailableVehicles(model.getVtname(), null, model.getFromDate(), model.getFromTime(), model.getToDate(), model.getToTime());
-//            if (available.length == 0) {
-//                return confNo;
-//            } else {
-//                vlicense = available[0].getVlicense();
-//            }
-//            // figure out confNo?
-//            Statement stmt = connection.createStatement();
-//            ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM reservations");
-//            confNo = rs.getInt(1) + 1;    // should return just an int
-//
-//            PreparedStatement ps = connection.prepareStatement("INSERT INTO reservations VALUES (?,?,?,?,?,?,?,?)");
-//            ps.setInt(1, confNo);
-//            ps.setString(2, model.getVtname());
-//            ps.setString(3, vlicense);
-//            ps.setInt(4, model.getDlicense());
-//            ps.setDate(5, model.getFromDate());
-//            ps.setTime(6, model.getFromTime());
-//            ps.setDate(7, model.getToDate());
-//            ps.setTime(8, model.getToTime());
-//
-//            ps.executeUpdate();
-//            connection.commit();
-//
-//            ps.close();
-//        } catch (SQLException e) {
-//            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-//            rollbackConnection();
-//        }
-//        return confNo;
-//    }
+    // TODO: for Fred: handle the result and convert all the results to be string[], order: rid, confNo, Date
+    public String[] clerkReturnVehicle(int rid, int odometer, int fulltank) {
+        String[] receipt = new String[10];
+        try{
+            Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM rentals WHERE rid = " + rid);
+            if (rs == null) {
+                throw new SQLException();
+            }
+
+            PreparedStatement ps = connection.prepareStatement("INSERT INTO rentals VALUES (?,?,?,?,?)");
+
+            //VERY NOT SURE WHICH ONES ARE AVAIBLE ATM ESPECIALLY ODOMETER
+            ps.setInt(1,model.getRid());
+            ps.setDate(2, model.getDate());
+            ps.setInt(4, model.getOdometer());
+            ps.setInt(5, model.getFulltank());
+            ps.setFloat(6, model.getValue());
+
+            ps.executeUpdate();
+
+            /*TODO Maybe do a delete somewhere
+             *
+             *
+             *
+             */
+            connection.commit();
+
+            ps.close();
+
+            //builds receipt string
+            receipt = receipt + "Confirmation Number: " + ""//TODO
+                    + "\nDate returned: " + java.time.LocalDateTime.now()
+                    + "\nAt: " + "/TODO some kind of location????" //TODO
+                    + "\nTotal Cost: " + model.getValue();
+
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+
+        return receipt;
+    }
 
 
     // public String[] clerkRentVehicle(int confNo, String vtname, String vlicense, int dlicense,

@@ -106,7 +106,7 @@ public class MainUI {
         return manipulationPane.getManipulationPanel();
     }
     private JPanel cardService() {
-        servicePane = new ServicePanel();
+        servicePane = new ServicePanel(delegate);
         return servicePane.getServicePanel();
     }
 

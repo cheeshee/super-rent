@@ -1,6 +1,4 @@
 package ca.ubc.cs304.model.ModelForService;
-import java.sql.Date;
-import java.sql.Time;
 
 /**
  * The intent for this class is to update/store information about a reservation
@@ -66,5 +64,38 @@ public class ReservationsModel {
         return toDate;
     }
 
-    // TODO add five more sets for the last five fields
+    public void setRid(int rid) {
+        this.rid = rid;
+    }
+    public int getRid() {
+        return rid;
+    }
+
+    public void setOdometer(int odometer) {
+        this.odometer = odometer;
+    }
+    public int getOdometer() {
+        return odometer;
+    }
+
+    public void setCardName(String cardName) {
+        this.cardName = cardName;
+    }
+    public String getCardName() {
+        return cardName;
+    }
+
+    public void setCardNo(String cardNo) {
+        this.cardNo = cardNo;
+    }
+    public String getCardNo() {
+        return cardNo;
+    }
+
+    public void setExpDate(String expDate) {
+        this.expDate = expDate;
+    }
+    public String getExpDate() {
+        return expDate;
+    }
 }

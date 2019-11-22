@@ -1,5 +1,7 @@
 package ca.ubc.cs304.ui;
 
+import ca.ubc.cs304.delegates.Delegate;
+
 import javax.swing.*;
 
 public class ServicePanel {
@@ -11,6 +13,7 @@ public class ServicePanel {
     private JPanel rentTab;
     private JPanel returnTab;
     private JPanel reportTab;
+    private Delegate delegate;
 
     // clerk - rent
     private JButton APPLYButton;
@@ -40,21 +43,25 @@ public class ServicePanel {
     private JLabel returnPeriod;
     private JLabel returnPeriodCont;
     private JLabel receiptHint;
+    private int choiceForClerkReport;
+
 
     // clerk - return
 
-    private int choiceForClerkReport;
+
 
     public JPanel getServicePanel() {
         return this.servicePanel;
     }
 
-    public ServicePanel() {
-        initializeCustomerPane();
-        servicePanel.add(customerPanel);
+    public ServicePanel(Delegate delegate) {
+        this.delegate = delegate;
 
+        initializeCustomerPane();
         initializeClerkPane();
-        servicePanel.add(clerkPanel);
+
+        servicePanel.add("customerPane",customerPanel);
+        servicePanel.add("clerkPane",clerkPanel);
     }
 
     /**customer panel*/
@@ -68,6 +75,10 @@ public class ServicePanel {
         initializeClerkRent();
         initializeClerkReturn();
         initializeReport(choiceForClerkReport);
+        tabbedPane1.add(rentTab);
+        tabbedPane1.add(returnTab);
+        tabbedPane1.add(reportTab);
+        clerkPanel.add(tabbedPane1);
     }
 
     private void initializeClerkRent(){ }
