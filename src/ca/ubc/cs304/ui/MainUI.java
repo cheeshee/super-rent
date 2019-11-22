@@ -1,15 +1,10 @@
 package ca.ubc.cs304.ui;
 
-
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import ca.ubc.cs304.delegates.Delegate;
-import ca.ubc.cs304.model.ModelForManipulation.*;
-import ca.ubc.cs304.model.ModelForService.*;
 
 import static javax.swing.JFrame.EXIT_ON_CLOSE;
 
@@ -19,11 +14,15 @@ public class MainUI {
     private Dimension dim = frame.getToolkit().getScreenSize();
     private JPanel contentPane = (JPanel) frame.getContentPane();
     private CardLayout cardLayout;
+
+    /**hardcode*/
     private JPanel cards;
+    /**GUI*/
+    private JPanel mainPanel;
+    private JButton button1;
+
 
     private Delegate delegate;
-
-
     // buttons on the main page
     private JButton servicebtn = new JButton("Services");
     private JButton manipulationbtn = new JButton("Manipulations");
@@ -36,6 +35,8 @@ public class MainUI {
 
     //initialize 'manipulation' card
     private ManipulationPanel manipulationPane;
+
+
 
     public MainUI(){
 

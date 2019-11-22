@@ -1,18 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="41368cdf-7758-4987-a91f-7d1336f03bed" name="Default Changelist" comment="welcome to play!">
+    <list default="true" id="41368cdf-7758-4987-a91f-7d1336f03bed" name="Default Changelist" comment="clean">
+      <change afterPath="$PROJECT_DIR$/src/ca/ubc/cs304/ui/ServicePanel.form" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/ca/ubc/cs304/controller/SuperRent.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/ca/ubc/cs304/controller/SuperRent.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/ca/ubc/cs304/database/DatabaseConnectionHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/ca/ubc/cs304/database/DatabaseConnectionHandler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/ca/ubc/cs304/delegates/Delegate.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/ca/ubc/cs304/delegates/Delegate.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/ca/ubc/cs304/model/ModelForManipulation/ManipulateCustomersModel.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/ca/ubc/cs304/model/ModelForManipulation/ManipulateCustomersModel.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/ca/ubc/cs304/model/ModelForManipulation/VehicleTypesModel.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/ca/ubc/cs304/model/ModelForService/ClerkGenerateReportModel.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/ca/ubc/cs304/model/ModelForService/ClerkRentalVehicleModel.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/ca/ubc/cs304/model/ModelForService/ClerkReturnsVehicleModel.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/ca/ubc/cs304/model/ModelForService/ClerkReturnsVehicleModel.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/ca/ubc/cs304/model/ModelForService/CustomerQueryModel.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/ca/ubc/cs304/model/ModelForService/ReservationsModel.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/ca/ubc/cs304/model/ModelForService/ReservationsModel.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bin/ca/ubc/cs304/ui/ManipulationPanel$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/ca/ubc/cs304/ui/ManipulationPanel$1.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bin/ca/ubc/cs304/ui/ManipulationPanel$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/ca/ubc/cs304/ui/ManipulationPanel$2.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bin/ca/ubc/cs304/ui/ManipulationPanel$3.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/ca/ubc/cs304/ui/ManipulationPanel$3.class" afterDir="false" />
@@ -23,10 +14,9 @@
       <change beforePath="$PROJECT_DIR$/bin/ca/ubc/cs304/ui/ManipulationPanel$8.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/ca/ubc/cs304/ui/ManipulationPanel$8.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bin/ca/ubc/cs304/ui/ManipulationPanel$9.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/ca/ubc/cs304/ui/ManipulationPanel$9.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bin/ca/ubc/cs304/ui/ManipulationPanel.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/ca/ubc/cs304/ui/ManipulationPanel.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ca/ubc/cs304/controller/SuperRent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ca/ubc/cs304/controller/SuperRent.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ca/ubc/cs304/database/DatabaseConnectionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ca/ubc/cs304/database/DatabaseConnectionHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ca/ubc/cs304/delegates/Delegate.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ca/ubc/cs304/delegates/Delegate.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ca/ubc/cs304/ui/MainUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ca/ubc/cs304/ui/MainUI.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ca/ubc/cs304/ui/ManipulationPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ca/ubc/cs304/ui/ManipulationPanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ca/ubc/cs304/ui/ServicePanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ca/ubc/cs304/ui/ServicePanel.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -90,7 +80,7 @@
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="DatabaseDriversLRU" value="oracle" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="UI_DESIGNER_EDITOR_MODE.UIDesignerToolWindowManager.WIDTH" value="267" />
+    <property name="UI_DESIGNER_EDITOR_MODE.UIDesignerToolWindowManager.WIDTH" value="352" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
     <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1574235793266" />
@@ -185,7 +175,9 @@
       <workItem from="1574364309509" duration="1707000" />
       <workItem from="1574366044637" duration="257000" />
       <workItem from="1574366534850" duration="254000" />
-      <workItem from="1574366795184" duration="20039000" />
+      <workItem from="1574366795184" duration="25230000" />
+      <workItem from="1574408106727" duration="2137000" />
+      <workItem from="1574410254163" duration="4256000" />
     </task>
     <task id="LOCAL-00001" summary="welcome to play!">
       <created>1574307247594</created>
@@ -208,7 +200,14 @@
       <option name="project" value="LOCAL" />
       <updated>1574374673946</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="clean">
+      <created>1574399623395</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1574399623395</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -230,6 +229,7 @@
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="welcome to play!" />
-    <option name="LAST_COMMIT_MESSAGE" value="welcome to play!" />
+    <MESSAGE value="clean" />
+    <option name="LAST_COMMIT_MESSAGE" value="clean" />
   </component>
 </project>

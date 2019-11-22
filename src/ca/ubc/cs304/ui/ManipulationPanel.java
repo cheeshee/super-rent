@@ -9,16 +9,12 @@ import ca.ubc.cs304.delegates.Delegate;
 import ca.ubc.cs304.model.ModelForManipulation.*;
 
 public class ManipulationPanel {
-
     /**step 2: assume the user choose the manipulation
      * then the project will jump to this part*/
 
-    //fields for cards
-    private CardLayout cardLayout = new CardLayout();
-    private JPanel cards = new JPanel(cardLayout);
-
-    // fields for card manipulation Home
-    private JPanel cardMHome = new JPanel();
+    // fields for card insert
+    private JPanel cardInsert = new JPanel(new GridLayout(1,3));
+    private JPanel panel1, panel2, panel3;
 
     /**step 3: assume the user click the INSERT button*/
     private JButton homeMInsertBtn = new JButton("INSERT");
@@ -27,13 +23,6 @@ public class ManipulationPanel {
     private JButton homeMViewSomeBtn = new JButton("VIEW SOME");
     private JButton homeMViewAllBtn = new JButton("VIEW ALL");
     private JButton homeMBackBtn = new JButton("BACK");
-
-    // fields for card inserts
-    private JPanel cardInsert = new JPanel(new GridLayout(1,3));
-    private JButton insertApplyBtn = new JButton("APPLY");
-    private JButton insertBackBtn = new JButton("BACK");
-    private String insertInput = null;
-
 
     // fields for card delete
     private JPanel cardDelete = new JPanel();
@@ -60,7 +49,11 @@ public class ManipulationPanel {
     private JButton viewAllBackBtn = new JButton("BACK");
 
     // delegate: SuperRent
-    public Delegate delegate;
+    private Delegate delegate;
+    private CardLayout cardLayout = new CardLayout();
+    private JPanel cards = new JPanel(cardLayout);
+    private JPanel cardMHome = new JPanel();
+
 
     // constructor
     public ManipulationPanel(Delegate delegate) {
@@ -87,6 +80,7 @@ public class ManipulationPanel {
     public JPanel getManipulationPanel() {
         return this.cards;
     }
+
     // return to the home page
     public JButton getHomeMBackBtn() {return this.homeMBackBtn;}
 
@@ -217,7 +211,6 @@ public class ManipulationPanel {
     }
 
     /**step 5: now the 'card' Insert shows*/
-    private JPanel panel1, panel2, panel3;
     private JPanel paintInsertTable(String state) {
         // first and third: before insert
         ManipulateCustomersModel[] ManipulateCustomersModels = delegate.viewCustomer();
@@ -345,8 +338,7 @@ public class ManipulationPanel {
         cardInsert.add(panel2);cardInsert.add(panel3);
         cardInsert.setOpaque(false);
     }
-
-
+    
     // initialize delete card
     private void initializeCardDelete() {
 
