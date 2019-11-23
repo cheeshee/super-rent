@@ -7,6 +7,8 @@ import ca.ubc.cs304.model.ModelForManipulation.ManipulateCustomersModel;
 import ca.ubc.cs304.model.ModelForService.*;
 import ca.ubc.cs304.ui.*;
 
+import java.sql.SQLException;
+
 
 /**
  * This is the main controller class that will orchestrate everything.
@@ -61,10 +63,12 @@ public class SuperRent implements LoginWindowDelegate, Delegate {
     }
         // when customer doesn't exist, call insertCustomer
 
+    // do change here
     // query 3
-    public String[] clerkRentVehicle(int confNo, String vtname, String vlicense, int dlicense, String fromDate,
+    //If customer already has reservation, only pass in confNo.
+    public String[] clerkRentVehicle(int confNo,String vtname, int dlicense, String fromDate,
                                      String toDate, String cardName, String cardNo, String expDate) {
-        return dbHandler.clerkRentVehicle(confNo,vtname,vlicense,dlicense, fromDate,toDate,cardName,cardNo, expDate);
+        return dbHandler.clerkRentVehicle(confNo,vtname,dlicense, fromDate,toDate,cardName,cardNo, expDate);
     }
 
     // query 4
@@ -78,8 +82,8 @@ public class SuperRent implements LoginWindowDelegate, Delegate {
     }
 
     // query 6
-    public ClerkGenerateReportForBranchRentalModel[] clerkGenerateReportForBranchRental(){
-        return dbHandler.clerkGenerateReportForBranchRental();
+    public ClerkGenerateReportForBranchRentalModel[] clerkGenerateReportForBranchRental(String location, String city){
+        return dbHandler.clerkGenerateReportForBranchRental(location, city);
     }
 
     // query 7
@@ -88,8 +92,8 @@ public class SuperRent implements LoginWindowDelegate, Delegate {
     }
 
     // query 8
-    public ClerkGenerateReportForBranchReturnModel[] clerkGenerateReportForBranchReturn(){
-        return dbHandler.clerkGenerateReportForBranchReturn();
+    public ClerkGenerateReportForBranchReturnModel[] clerkGenerateReportForBranchReturn(String location, String city){
+        return dbHandler.clerkGenerateReportForBranchReturn(location, city);
     };
 
 
@@ -97,6 +101,9 @@ public class SuperRent implements LoginWindowDelegate, Delegate {
     // for example:
     public void insertCustomer(int dlicense, String name, String cellphone, String address) {
         dbHandler.insertCustomer(dlicense, name, cellphone, address);
+    }
+    public void deleteCustomer(int dlicense){
+        dbHandler.deleteCustomer(dlicense);
     }
     public ManipulateCustomersModel[] viewCustomer() {
         System.out.println("in super-rent viewCustomer");

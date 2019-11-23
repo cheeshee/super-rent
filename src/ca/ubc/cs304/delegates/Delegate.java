@@ -8,6 +8,8 @@ public interface Delegate {
 
     /**manipulation function*/
     void insertCustomer(int dlicense, String name, String cellphone, String address);
+    void deleteCustomer(int dlicense);
+    // EFFECTS: helper function of insertCustomer, as well as viewSome query function
     ManipulateCustomersModel[] viewCustomer();
 
 
@@ -20,7 +22,7 @@ public interface Delegate {
     int customerMakeReservation(String vtname, int dlicense, String fromDate, String toDate);
 
     // query 3
-    String[] clerkRentVehicle(int confNo, String vtname, String vlicense, int dlicense, String fromDate,
+    String[] clerkRentVehicle(int confNo, String vtname, int dlicense, String fromDate,
                               String toDate, String cardName, String cardNo, String expDate);
 
     // query 4
@@ -30,12 +32,12 @@ public interface Delegate {
     ClerkGenerateReportForRentalModel[] clerkGenerateReportForRental();
 
     // query 6
-    ClerkGenerateReportForBranchRentalModel[] clerkGenerateReportForBranchRental();
+    ClerkGenerateReportForBranchRentalModel[] clerkGenerateReportForBranchRental(String location, String city);
 
     // query 7
     ClerkGenerateReportForReturnModel[] clerkGenerateReportForReturn();
 
     // query 8
-    ClerkGenerateReportForBranchReturnModel[] clerkGenerateReportForBranchReturn();
+    ClerkGenerateReportForBranchReturnModel[] clerkGenerateReportForBranchReturn(String location, String city);
 
 }

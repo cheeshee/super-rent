@@ -132,7 +132,6 @@ public class DatabaseConnectionHandler {
         }
         return result;
     }
-    
 
     /**
      * 
@@ -142,7 +141,7 @@ public class DatabaseConnectionHandler {
      * @param toDate
      * @return confNo or throws an exception if there's an error
      */
-    public int customerMakeReservation(String vtname, int dlicense, String fromDate, String toDate) throws SQLException{
+    public int customerMakeReservation(String vtname, int dlicense, String fromDate, String toDate){
         int confNo = 0;
         try {
 
@@ -213,7 +212,7 @@ public class DatabaseConnectionHandler {
     }
 
     // query 6
-    public ClerkGenerateReportForBranchRentalModel[] clerkGenerateReportForBranchRental() {
+    public ClerkGenerateReportForBranchRentalModel[] clerkGenerateReportForBranchRental(String location, String city) {
         return null;
     }
 
@@ -223,7 +222,7 @@ public class DatabaseConnectionHandler {
     }
 
     // query 8
-    public ClerkGenerateReportForBranchReturnModel[] clerkGenerateReportForBranchReturn() {
+    public ClerkGenerateReportForBranchReturnModel[] clerkGenerateReportForBranchReturn(String location, String city) {
         return null;
     }
     /**
@@ -292,16 +291,29 @@ public class DatabaseConnectionHandler {
             rollbackConnection();
         }
     }
+    public void deleteCustomer(int dlicense) {
+        try {
+            PreparedStatement ps = connection.prepareStatement("DELETE FROM customers WHERE DLICENSE = ?");
+            ps.setInt(1, dlicense);
 
+            System.out.println("inside delete customer");
+            ps.executeUpdate();
+            connection.commit();
+
+            ps.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+    }
     public ManipulateCustomersModel[] viewCustomer() {
-        //System.out.println("in dbhandler viewCustomer");
-
         ArrayList<ManipulateCustomersModel> result = new ArrayList<>();
 
         try {
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT * FROM customers");
             while (rs.next()) {
+                System.out.println("in dbhandler viewCustomer");
                 ManipulateCustomersModel model = new ManipulateCustomersModel();
                 model.setDlicense(rs.getInt("dlicense"));
                 model.setName(rs.getString("name"));
@@ -425,7 +437,7 @@ public class DatabaseConnectionHandler {
     // you can call other function
     // you need to set vehicle status to "rented"
     // check for null value inputs
-    public String[] clerkRentVehicle(int confNo, String vtname, String vlicense, int dlicense, String fromDate, String toDate, String cardName, String cardNo, String expDate) throws SQLException{
+    public String[] clerkRentVehicle(int confNo, String vtname, int dlicense, String fromDate, String toDate, String cardName, String cardNo, String expDate){
         String[] receipt = new String[10];
 
         try{//check if confNo exists
@@ -460,7 +472,7 @@ public class DatabaseConnectionHandler {
                     throw new SQLException();
                 }
 
-                receipt = clerkRentVehicleInsertQuery(vlicense, dlicense, fromDate, toDate, rs0.getInt("odometer"), cardName, cardNo,expDate,confNo, rs0.getString("location"), rs0.getString("city"), vtname);
+                receipt = clerkRentVehicleInsertQuery(rs.getString("license"), dlicense, fromDate, toDate, rs0.getInt("odometer"), cardName, cardNo,expDate,confirmation, rs0.getString("location"), rs0.getString("city"), vtname);
                 stmt.close();
 
             }
@@ -475,7 +487,7 @@ public class DatabaseConnectionHandler {
     }
 
     private String[] clerkRentVehicleInsertQuery(String vlicense, int dlicense, String fromDate, String toDate, int odometer,
-                                             String cardName, String cardNo, String expDate, int confNo, String location, String city, String vtname ) throws SQLException{
+                                             String cardName, String cardNo, String expDate, int confNo, String location, String city, String vtname ){
 
         String[] receipt = new String[10];
 
@@ -529,44 +541,39 @@ public class DatabaseConnectionHandler {
     // TODO: for Fred: handle the result and convert all the results to be string[], order: rid, confNo, Date
     public String[] clerkReturnVehicle(int rid, int odometer, int fulltank) {
         String[] receipt = new String[10];
-        try{
-            Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM rentals WHERE rid = " + rid);
-            if (rs == null) {
-                throw new SQLException();
-            }
-
-            PreparedStatement ps = connection.prepareStatement("INSERT INTO rentals VALUES (?,?,?,?,?)");
-
-            //VERY NOT SURE WHICH ONES ARE AVAIBLE ATM ESPECIALLY ODOMETER
-            ps.setInt(1,model.getRid());
-            ps.setDate(2, model.getDate());
-            ps.setInt(4, model.getOdometer());
-            ps.setInt(5, model.getFulltank());
-            ps.setFloat(6, model.getValue());
-
-            ps.executeUpdate();
-
-            /*TODO Maybe do a delete somewhere
-             *
-             *
-             *
-             */
-            connection.commit();
-
-            ps.close();
-
-            //builds receipt string
-            receipt = receipt + "Confirmation Number: " + ""//TODO
-                    + "\nDate returned: " + java.time.LocalDateTime.now()
-                    + "\nAt: " + "/TODO some kind of location????" //TODO
-                    + "\nTotal Cost: " + model.getValue();
-
-        } catch (SQLException e) {
-            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
-            rollbackConnection();
-        }
-
+//        try{
+//            Statement stmt = connection.createStatement();
+//            ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM rentals WHERE rid = " + rid);
+//            if (rs == null) { //throw new SQLException(); }
+//            PreparedStatement ps = connection.prepareStatement("INSERT INTO rentals VALUES (?,?,?,?,?)");
+//
+//            //VERY NOT SURE WHICH ONES ARE AVAIBLE ATM ESPECIALLY ODOMETER
+//            ps.setInt(1,rid);
+//            ps.setDate(2, model.getDate());
+//            ps.setInt(4, model.getOdometer());
+//            ps.setInt(5, model.getFulltank());
+//            ps.setFloat(6, model.getValue());
+//
+//            ps.executeUpdate();
+//
+//            /*TODO Maybe do a delete somewhere
+//             *
+//             *
+//             *
+//             */
+//            connection.commit();
+//
+//            ps.close();
+//
+//            //builds receipt string
+//            receipt = receipt + "Confirmation Number: " + ""//TODO
+//                    + "\nDate returned: " + java.time.LocalDateTime.now()
+//                    + "\nAt: " + "/TODO some kind of location????" //TODO
+//                    + "\nTotal Cost: " + model.getValue();
+//        } catch (Exception e) {
+//            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+//            rollbackConnection();
+//        }
         return receipt;
     }
 
