@@ -9,6 +9,7 @@ public interface Delegate {
     /**manipulation function*/
     void insertCustomer(int dlicense, String name, String cellphone, String address);
     void deleteCustomer(int dlicense);
+    void updateCustomer(String address, String name);
     // EFFECTS: helper function of insertCustomer, as well as viewSome query function
     ManipulateCustomersModel[] viewCustomer();
 

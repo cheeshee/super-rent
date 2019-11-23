@@ -120,10 +120,19 @@ public class MainUI {
     }
     private void setButtonAction() {
         JButton mBackBtn = manipulationPane.getHomeMBackBtn();
+        JButton sBackBtn = servicePanel.getBackBtn();
+
         mBackBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 cardLayout.show(cards,"cardHome");
+            }
+        });
+
+        sBackBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(cards, "cardHome");
             }
         });
 

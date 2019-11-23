@@ -296,7 +296,6 @@ public class DatabaseConnectionHandler {
             PreparedStatement ps = connection.prepareStatement("DELETE FROM customers WHERE DLICENSE = ?");
             ps.setInt(1, dlicense);
 
-            System.out.println("inside delete customer");
             ps.executeUpdate();
             connection.commit();
 
@@ -306,6 +305,24 @@ public class DatabaseConnectionHandler {
             rollbackConnection();
         }
     }
+    public void updateCustomer(String address, String name) {
+        try {
+            PreparedStatement ps = connection.prepareStatement("update CUSTOMERS\n" +
+                    "set customers.ADDRESS = ?\n" +
+                    "where customers.NAME =  ?;");
+            ps.setString(1, address);
+            ps.setString(2, name);
+
+            ps.executeUpdate();
+            connection.commit();
+
+            ps.close();
+        } catch (SQLException e) {
+            System.out.println(EXCEPTION_TAG + " " + e.getMessage());
+            rollbackConnection();
+        }
+
+    }
     public ManipulateCustomersModel[] viewCustomer() {
         ArrayList<ManipulateCustomersModel> result = new ArrayList<>();
 
@@ -313,7 +330,6 @@ public class DatabaseConnectionHandler {
             Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT * FROM customers");
             while (rs.next()) {
-                System.out.println("in dbhandler viewCustomer");
                 ManipulateCustomersModel model = new ManipulateCustomersModel();
                 model.setDlicense(rs.getInt("dlicense"));
                 model.setName(rs.getString("name"));

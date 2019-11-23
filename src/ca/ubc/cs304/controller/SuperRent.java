@@ -105,6 +105,9 @@ public class SuperRent implements LoginWindowDelegate, Delegate {
     public void deleteCustomer(int dlicense){
         dbHandler.deleteCustomer(dlicense);
     }
+    public void updateCustomer(String address, String name) {
+        dbHandler.updateCustomer(address,name);
+    }
     public ManipulateCustomersModel[] viewCustomer() {
         System.out.println("in super-rent viewCustomer");
         return dbHandler.viewCustomer();

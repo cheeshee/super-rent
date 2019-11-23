@@ -7,12 +7,19 @@ import java.awt.event.ActionListener;
 
 import ca.ubc.cs304.delegates.Delegate;
 import ca.ubc.cs304.model.ModelForManipulation.*;
+/**steps:*/
+/**paint: initialize all panels*/
+/**handle: get inputs, request for query(pass the param and call function), set the result panel(setText)*/
+/**show: add actionlistener to the buttons(setVisible(true))*/
 
 public class ManipulationPanel {
-    /**step 2: assume the user choose the manipulation
-     * then the project will jump to this part*/
+    // fiels for initialization
+    private Delegate delegate;
 
-    /**step 3: assume the user click the INSERT button*/
+    // btns in menu
+    private CardLayout cardLayout = new CardLayout();
+    private JPanel cards = new JPanel(cardLayout);
+    private JPanel cardMHome = new JPanel();
     private JButton homeMInsertBtn = new JButton("INSERT");
     private JButton homeMDeleteBtn = new JButton("DELETE");
     private JButton homeMUpdateBtn = new JButton("UPDATE");
@@ -45,34 +52,26 @@ public class ManipulationPanel {
     private JTextField dlicenseDelete;
     private JPanel topMiddlePart1 = new JPanel(new GridLayout(1,2));
     private JLabel hint11 = new JLabel("DELETE FROM CUSTOMERS");
-    private JPanel midMiddlePart1 = new JPanel(new GridLayout(1,6));
+    private JPanel midMiddlePart1 = new JPanel(new GridLayout(1,2));
     private JLabel hint22 = new JLabel("WHERE VALUES = ");
 
 
-
     // fields for card update
-    private JPanel cardUpdate = new JPanel();
-    private JButton updateApplyBtn = new JButton("APPLY");
-    private JButton updateBackBtn = new JButton("BACK");
-    private String updateInput = null;
-
-    // fields for card showing specific table
-    private JPanel cardViewSome = new JPanel();
-    private JButton viewSomeApplyBtn = new JButton("APPLY");
-    private JButton viewSomeBackBtn = new JButton("BACK");
+    private JPanel cardUpdate = new JPanel(new GridLayout(1,3));
+    private JPanel updatePanel1, updatePanel2, updatePanel3;
+    private JButton applyBtnUpdate = new JButton("APPLY");
+    private JButton showBtnUpdate = new JButton("SHOW");
+    private JButton backBtnUpdate = new JButton("BACK");
+    private JTextField addressUpdate;
+    private JTextField nameUpdate;
 
     // fields for card showing all the tables
     private JPanel cardViewAll = new JPanel();
     private JButton viewAllBackBtn = new JButton("BACK");
 
-    // delegate: SuperRent
-    private Delegate delegate;
-    private CardLayout cardLayout = new CardLayout();
-    private JPanel cards = new JPanel(cardLayout);
-    private JPanel cardMHome = new JPanel();
-
 
     /**dominant functions*/
+    // delegate: SuperRent
     public ManipulationPanel(Delegate delegate) {
         this.delegate = delegate;
 
@@ -87,7 +86,6 @@ public class ManipulationPanel {
         cards.add("cardInsert",cardInsert);
         cards.add("cardDelete",cardDelete);
         cards.add("cardUpdate",cardUpdate);
-        cards.add("cardViewSome", cardViewSome);
         cards.add("cardViewAll", cardViewAll);
         cardLayout.show(cards,"cardMHome");
     }
@@ -98,9 +96,150 @@ public class ManipulationPanel {
     // return to the home page
     public JButton getHomeMBackBtn() {return this.homeMBackBtn;}
 
-    /**paint: initialize all panels*/
-    /**handle: get inputs, request for query(pass the param and call function), set the result panel(setText)*/
-    /**show: add actionlistener to the buttons(setVisible(true))*/
+
+    /**helper functions for insert, update, delete*/
+    // EFFECTS: helper function to paint card (also view some tables!!)
+    private JPanel paintTable(String state) {
+        // first do query, get the number of rows of table customer
+        ManipulateCustomersModel[] ManipulateCustomersModels = delegate.viewCustomer();
+
+        JPanel tablePane = new JPanel(new GridLayout(ManipulateCustomersModels.length + 2,1));
+        tablePane.setBorder(BorderFactory.createEmptyBorder(10,20,10,20));
+        tablePane.setOpaque(false);
+
+        if (state.equals("before"))
+            tablePane.setVisible(true);
+        else if (state.equals("after"))
+            tablePane.setVisible(false);
+        else
+            JOptionPane.showMessageDialog(null,"error when viewing customer table");
+
+        // second paint the result to the panel
+        JLabel hint = new JLabel(state+" insert");
+        hint.setBorder(BorderFactory.createEmptyBorder(10,20,10,20));
+        hint.setFont(new Font("SansSerif", Font.BOLD, 30));
+        tablePane.add(hint);
+
+        JLabel attr = new JLabel("dlicense      name        cellphone        address");
+        attr.setFont(new Font("SansSerif",Font.BOLD,15));
+        tablePane.add(attr);
+
+        for (int i = 0; i< ManipulateCustomersModels.length; i++) {
+            JLabel aftCustomer = new JLabel();
+            aftCustomer.setText(
+                    ManipulateCustomersModels[i].getDlicense()+"   "+ ManipulateCustomersModels[i].getName()+"   "+
+                            ManipulateCustomersModels[i].getCellphone()+ "   "+ ManipulateCustomersModels[i].getAddress());
+            tablePane.add(aftCustomer);
+        }
+
+        return tablePane;
+    }
+
+
+
+    /**for delete card*/
+    // EFFECTS: paint manipulation delete card
+    private void initializeCardDelete() {
+        applyBtnDelete = new JButton("APPLY");
+        showBtnDelete = new JButton("SHOW");
+        backBtnDelete = new JButton("BACK");
+        dlicenseDelete = new JTextField();
+
+        //
+        deletePanel1 = paintTable("before");
+
+        //
+        deletePanel2 = new JPanel(new GridLayout(3,1));
+        deletePanel2.setBorder(BorderFactory.createEmptyBorder(80,80,80,80));
+        deletePanel2.setOpaque(false);
+        deletePanel2.setVisible(true);
+
+        topMiddlePart1.setOpaque(false);
+        topMiddlePart1.add(hint11);
+
+        midMiddlePart1.setBorder(BorderFactory.createEmptyBorder(20,10,30,10));
+        midMiddlePart1.setOpaque(false);
+        midMiddlePart1.add(hint22);
+        midMiddlePart1.add(dlicenseDelete);
+
+        JPanel bottomMiddlePanel = new JPanel(new GridLayout(1,3));
+        bottomMiddlePanel.add(applyBtnDelete);
+        bottomMiddlePanel.add(showBtnDelete);
+        bottomMiddlePanel.add(backBtnDelete);
+        bottomMiddlePanel.setOpaque(false);
+        bottomMiddlePanel.setVisible(true);
+
+
+        deletePanel2.add(topMiddlePart1);
+        deletePanel2.add(midMiddlePart1);
+        deletePanel2.add(bottomMiddlePanel);
+
+        // paint right part
+        deletePanel3 = new JPanel();
+        deletePanel3.setOpaque(false);
+        deletePanel3.setVisible(false);
+
+        // add all the three panels to the insertPanel
+        cardDelete.add(deletePanel1);
+        cardDelete.add(deletePanel2);
+        cardDelete.add(deletePanel3);
+        cardDelete.setOpaque(false);
+
+        setDeletetBtns();
+    }
+
+    // EFFECTS: show the result
+    private void setDeletetBtns() {
+        applyBtnDelete.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String ddlicense = dlicenseDelete.getText().trim();
+                System.out.println("in setDeleteBtns");
+                if (ddlicense.equals("") ) {
+                    JOptionPane.showMessageDialog(null, "dlicense  cannot be null!");
+                } else {
+                    delegate.deleteCustomer(Integer.parseInt(ddlicense));
+                    deletePanel3.removeAll();
+                    deletePanel3 = paintTable("after");
+                    deletePanel3.setOpaque(false);
+                    deletePanel3.setVisible(false);
+                    cardDelete.add(deletePanel3);
+                }
+            }
+        });
+        showBtnDelete.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                deletePanel3.setVisible(true);
+            }
+        });
+        backBtnDelete.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(cards,"cardMHome");
+                cardDelete.removeAll();
+            }
+        });
+    }
+
+
+    /**for update card*/
+    // initialize update card
+    private void initializeCardUpdate() {
+
+    }
+
+
+    private void setUpdateBtns(){}
+
+    /**for viewAll card*/
+    // initialize show all card
+    private void initializeCardViewAll() {
+
+    }
+
+
+
 
     /**for mHome card*/
     // EFFECTS: paint manipulation home card
@@ -270,48 +409,11 @@ public class ManipulationPanel {
         cardInsert.add(insertPanel2);
         cardInsert.add(insertPanel3);
         cardInsert.setOpaque(false);
-        setHomeMInsertBtn();
-    }
-
-    // EFFECTS: helper function to paint insert card (also view some tables!!)
-    private JPanel paintTable(String state) {
-        // first do query, get the number of rows of table customer
-        ManipulateCustomersModel[] ManipulateCustomersModels = delegate.viewCustomer();
-
-        JPanel tablePane = new JPanel(new GridLayout(ManipulateCustomersModels.length + 2,1));
-        tablePane.setBorder(BorderFactory.createEmptyBorder(10,20,10,20));
-        tablePane.setOpaque(false);
-
-        if (state.equals("before"))
-            tablePane.setVisible(true);
-        else if (state.equals("after"))
-            tablePane.setVisible(false);
-        else
-            JOptionPane.showMessageDialog(null,"error when viewing customer table");
-
-        // second paint the result to the panel
-        JLabel hint = new JLabel(state+" insert");
-        hint.setBorder(BorderFactory.createEmptyBorder(10,20,10,20));
-        hint.setFont(new Font("SansSerif", Font.BOLD, 30));
-        tablePane.add(hint);
-
-        JLabel attr = new JLabel("dlicense      name        cellphone        address");
-        attr.setFont(new Font("SansSerif",Font.BOLD,15));
-        tablePane.add(attr);
-
-        for (int i = 0; i< ManipulateCustomersModels.length; i++) {
-            JLabel aftCustomer = new JLabel();
-            aftCustomer.setText(
-                    ManipulateCustomersModels[i].getDlicense()+"   "+ ManipulateCustomersModels[i].getName()+"   "+
-                            ManipulateCustomersModels[i].getCellphone()+ "   "+ ManipulateCustomersModels[i].getAddress());
-            tablePane.add(aftCustomer);
-        }
-
-        return tablePane;
+        setInsertBtns();
     }
 
     // EFFECTS: show the result
-    private void setHomeMInsertBtn() {
+    private void setInsertBtns() {
         applyBtnInsert.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -346,105 +448,6 @@ public class ManipulationPanel {
                 cardInsert.removeAll();
             }
         });
-    }
-
-    /**for delete card*/
-    // initialize delete card
-    private void initializeCardDelete() {
-        applyBtnDelete = new JButton("APPLY");
-        showBtnDelete = new JButton("SHOW");
-        backBtnDelete = new JButton("BACK");
-        dlicenseDelete = new JTextField();
-
-        //
-        deletePanel1 = paintTable("before");
-
-        //
-        deletePanel2 = new JPanel(new GridLayout(3,1));
-        deletePanel2.setBorder(BorderFactory.createEmptyBorder(80,80,80,80));
-        deletePanel2.setOpaque(false);
-        deletePanel2.setVisible(true);
-
-        topMiddlePart1.setOpaque(false);
-        topMiddlePart1.add(hint11);
-
-        midMiddlePart1.setBorder(BorderFactory.createEmptyBorder(20,10,30,10));
-        midMiddlePart1.setOpaque(false);
-        midMiddlePart1.add(hint22);
-
-        midMiddlePart1.add(dlicenseDelete);
-
-        JPanel bottomMiddlePanel = new JPanel(new GridLayout(1,3));
-        bottomMiddlePanel.add(applyBtnDelete);
-        bottomMiddlePanel.add(showBtnDelete);
-        bottomMiddlePanel.add(backBtnDelete);
-        bottomMiddlePanel.setOpaque(false);
-        bottomMiddlePanel.setVisible(true);
-
-
-        deletePanel2.add(topMiddlePart1);
-        deletePanel2.add(midMiddlePart1);
-        deletePanel2.add(bottomMiddlePanel);
-
-        // paint right part
-        deletePanel3 = new JPanel();
-        deletePanel3.setOpaque(false);
-        deletePanel3.setVisible(false);
-
-
-        // add all the three panels to the insertPanel
-        cardDelete.add(deletePanel1);
-        cardDelete.add(deletePanel2);
-        cardDelete.add(deletePanel3);
-        cardDelete.setOpaque(false);
-
-        setHomeMDeletetBtn();
-    }
-
-    private void setHomeMDeletetBtn() {
-        applyBtnDelete.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String ddlicense = dlicenseDelete.getText().trim();
-
-                if (ddlicense.equals("") ) {
-                    JOptionPane.showMessageDialog(null, "dlicense  cannot be null!");
-                } else {
-                    delegate.deleteCustomer(Integer.parseInt(ddlicense));
-                    deletePanel3.removeAll();
-                    deletePanel3 = paintTable("after");
-                    deletePanel3.setOpaque(false);
-                    deletePanel3.setVisible(false);
-                    cardDelete.add(deletePanel3);
-                }
-            }
-        });
-        showBtnDelete.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                deletePanel3.setVisible(true);
-            }
-        });
-        backBtnDelete.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                cardLayout.show(cards,"cardMHome");
-                cardDelete.removeAll();
-            }
-        });
-    }
-
-
-    /**for update card*/
-    // initialize update card
-    private void initializeCardUpdate() {
-
-    }
-
-    /**for viewAll card*/
-    // initialize show all card
-    private void initializeCardViewAll() {
-
     }
 
 }
