@@ -3,6 +3,8 @@ package ca.ubc.cs304.delegates;
 import ca.ubc.cs304.model.ModelForManipulation.ManipulateCustomersModel;
 import ca.ubc.cs304.model.ModelForService.*;
 
+import java.util.List;
+
 // TODO: backend step 1: add function signature here
 public interface Delegate {
 
@@ -12,6 +14,7 @@ public interface Delegate {
     void updateCustomer(String address, String name);
     // EFFECTS: helper function of insertCustomer, as well as viewSome query function
     ManipulateCustomersModel[] viewCustomer();
+    List viewAllTables();
 
 
     /**service function*/

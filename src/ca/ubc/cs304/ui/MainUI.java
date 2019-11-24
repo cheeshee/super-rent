@@ -119,7 +119,7 @@ public class MainUI {
         return imgLabel;
     }
     private void setButtonAction() {
-        JButton mBackBtn = manipulationPane.getHomeMBackBtn();
+        JButton mBackBtn = manipulationPane.getBackBtn();
         JButton sBackBtn = servicePanel.getBackBtn();
 
         mBackBtn.addActionListener(new ActionListener() {

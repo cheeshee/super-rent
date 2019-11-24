@@ -7,7 +7,9 @@ import ca.ubc.cs304.model.ModelForManipulation.ManipulateCustomersModel;
 import ca.ubc.cs304.model.ModelForService.*;
 import ca.ubc.cs304.ui.*;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 
 /**
@@ -111,6 +113,9 @@ public class SuperRent implements LoginWindowDelegate, Delegate {
     public ManipulateCustomersModel[] viewCustomer() {
         System.out.println("in super-rent viewCustomer");
         return dbHandler.viewCustomer();
+    }
+    public List viewAllTables(){
+        return dbHandler.viewAllTables();
     }
 
 
